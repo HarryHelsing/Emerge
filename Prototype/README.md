@@ -1,0 +1,11 @@
+### Aims of the OffBeast prototype
+-[] Create Rhythm Movement system
+-[x] Create Player Character
+-[] Create Enemies
+-[] Create Obstacles
+-[] Create Movement Logic
+-[] Create Attack Logic
+-[x] Create Tilemap Function
+-[x] Set Camera
+-[] Create death logic
+-[] Refine and tweek controls
