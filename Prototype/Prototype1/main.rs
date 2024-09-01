@@ -7,6 +7,8 @@ mod tiles;
 
 const GRID_WIDTH: usize = 32;
 const GRID_HEIGHT: usize = 18;
+const F_GRID_WIDTH: f32 = GRID_WIDTH as f32;
+const F_GRID_HEIGHT: f32 = GRID_HEIGHT as f32;
 const SCREEN_WIDTH: f32 = 320.0;
 const SCREEN_HEIGHT: f32 = 180.0;
 const CELL_SIZE: f32 = 10.0;
@@ -26,6 +28,7 @@ fn main() {
         .add_systems(Startup, setup)
         .add_systems(Update, resize_camera)
         .add_systems(Update, move_entities)
+        .add_systems(Update, update_pos.after(move_entities))
         .add_systems(Update, keyboard_movement)
         .run();
 }
@@ -42,6 +45,18 @@ struct GridPos {
 }
 
 #[derive(Component)]
+struct UpdateGridPos {
+    xgrid: f32,
+    ygrid: f32,
+}
+
+#[derive(Component)]
+struct ObstaclePos {
+    xgrid: f32,
+    ygrid: f32,
+}
+
+#[derive(Component)]
 struct MovementTimer(Timer);
 
 fn setup(mut commands: Commands, asset_server: Res<AssetServer> /*, mut textures: ResMut<Assets<Image>> not needed currently*/) {
@@ -51,14 +66,29 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer> /*, mut textures
     let texture_handle_grass4 = asset_server.load("grass4.png");
     let texture_handle_water = asset_server.load("water.png");
     let texture_handle_blob = asset_server.load("blobplayer.png");
+    let texture_handle_rock = asset_server.load("rock.png");
 
     commands.spawn((
-            OnMap,
             Player,
+            ObstaclePos { xgrid: 0.0, ygrid: 0.0 },
+            OnMap,
             MovementTimer(Timer::from_seconds(0.2, TimerMode::Repeating)),
         GridPos { xgrid: 0.0, ygrid: 0.0 },
+        UpdateGridPos { xgrid: 0.0, ygrid: 0.0 },
         SpriteBundle {
             texture: texture_handle_blob.clone(),
+            transform: Transform::from_xyz(0.0, 0.0, 1.0),
+            ..Default::default()
+        },
+    ));
+
+commands.spawn((
+        OnMap,
+        GridPos { xgrid: 5.0, ygrid: 5.0 },
+        ObstaclePos { xgrid: 5.0, ygrid: 5.0 },
+        UpdateGridPos { xgrid: 5.0, ygrid: 5.0 },
+        SpriteBundle {
+            texture: texture_handle_rock.clone(),
             transform: Transform::from_xyz(0.0, 0.0, 1.0),
             ..Default::default()
         },
@@ -122,6 +152,102 @@ fn move_entities(mut query: Query<(&GridPos, &mut Transform), With<OnMap>>) {
     };
 }
 
+
+fn keyboard_movement(
+    keys: Res<ButtonInput<KeyCode>>,
+    mut query: Query<(&GridPos, &mut UpdateGridPos), With<Player>>,
+    obstacle_query: Query<&ObstaclePos>,
+) {
+        let mut blocked = false;
+        let mut new_x = 0.0;
+        let mut new_y = 0.0;
+    for (GridPos, mut UpdateGridPos) in &mut query {
+        UpdateGridPos.xgrid = GridPos.xgrid;
+        UpdateGridPos.ygrid = GridPos.ygrid;
+            if keys.just_pressed(KeyCode::ArrowLeft) {
+               if UpdateGridPos.xgrid > 0.0 {UpdateGridPos.xgrid -= 1.0;}
+            } else if keys.just_pressed(KeyCode::ArrowRight) {
+               if UpdateGridPos.xgrid < F_GRID_WIDTH - 1.0 {UpdateGridPos.xgrid += 1.0;}
+            } else if keys.just_pressed(KeyCode::ArrowUp) {
+               if UpdateGridPos.ygrid < F_GRID_HEIGHT - 1.0 {UpdateGridPos.ygrid += 1.0;}
+            } else if keys.just_pressed(KeyCode::ArrowDown) {
+               if UpdateGridPos.ygrid > 0.0 {UpdateGridPos.ygrid -= 1.0;}
+            }
+        new_x = UpdateGridPos.xgrid;
+        new_y = UpdateGridPos.ygrid;
+            for ObstaclePos in &obstacle_query {
+            if  new_x == ObstaclePos.xgrid && new_y ==  ObstaclePos.ygrid {
+                blocked = true;
+                break;
+
+        }
+
+    }
+
+        // If not blocked, update the position
+        if blocked {
+            UpdateGridPos.xgrid = GridPos.xgrid;
+            UpdateGridPos.ygrid = GridPos.ygrid;
+        }
+            }
+
+}
+//Potential problem! Later when entities don't have a ObstaclePos this won't work
+//Perhaps make fn with without ObstaclePos
+fn update_pos(
+    mut query: Query<(&mut GridPos, &mut ObstaclePos, &UpdateGridPos)>,
+    ) {
+    for (mut GridPos, mut ObstaclePos, UpdateGridPos) in &mut query {
+        GridPos.xgrid = UpdateGridPos.xgrid;
+        GridPos.ygrid = UpdateGridPos.ygrid;
+        ObstaclePos.xgrid = GridPos.xgrid;
+        ObstaclePos.ygrid = GridPos.ygrid;
+            }
+
+}
+// Obstacle checking Movement function
+/*
+fn keyboard_movement(
+    keys: Res<ButtonInput<KeyCode>>,
+    mut query: Query<&mut GridPos, With<OnMap>>,
+    obstacle_query: Query<&GridPos, With<Obstacle>>,
+) {
+    for mut GridPos in &mut query {
+        // Calculate the potential new position
+        let mut new_xgrid = GridPos.xgrid;
+        let mut new_ygrid = GridPos.ygrid;
+
+        if keys.just_pressed(KeyCode::ArrowLeft) {
+            new_xgrid -= 1.0;
+        } else if keys.just_pressed(KeyCode::ArrowRight) {
+            new_xgrid += 1.0;
+        } else if keys.just_pressed(KeyCode::ArrowUp) {
+            new_ygrid += 1.0;
+        } else if keys.just_pressed(KeyCode::ArrowDown) {
+            new_ygrid -= 1.0;
+        }
+
+        // Check for boundaries
+        if new_xgrid < 0.0 || new_xgrid >= F_GRID_WIDTH || new_ygrid < 0.0 || new_ygrid >= F_GRID_HEIGHT {
+            continue; // Skip the movement if it goes out of bounds
+        }
+
+        // Check for obstacles
+        let mut blocked = false;
+        for obstacle_pos in &obstacle_query {
+            if obstacle_pos.xgrid == new_xgrid && obstacle_pos.ygrid == new_ygrid {
+                blocked = true;
+                break;
+            }
+        }
+
+        // If not blocked, update the position
+        if !blocked {
+            GridPos.xgrid = new_xgrid;
+            GridPos.ygrid = new_ygrid;
+        }
+    }
+}*/
 /*
 fn keyboard_movement(
     keys: Res<ButtonInput<KeyCode>>,
@@ -150,19 +276,3 @@ fn keyboard_movement(
     }
 }
 */
-fn keyboard_movement(
-    keys: Res<ButtonInput<KeyCode>>,
-    mut query: Query<&mut GridPos, With<OnMap>>
-    ) {
-    for (mut GridPos) in &mut query {
-            if keys.just_pressed(KeyCode::ArrowLeft) {
-                GridPos.xgrid -= 1.0;
-            } else if keys.just_pressed(KeyCode::ArrowRight) {
-                GridPos.xgrid += 1.0;
-            } else if keys.just_pressed(KeyCode::ArrowUp) {
-                GridPos.ygrid += 1.0;
-            } else if keys.just_pressed(KeyCode::ArrowDown) {
-                GridPos.ygrid -= 1.0;
-            }
-    }
-}
