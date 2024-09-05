@@ -81,30 +81,58 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer> /*, mut textures
             ..Default::default()
         },
     ));
-
-commands.spawn((
+fn spawn_rock(
+    commands: &mut Commands,
+    texture_handle_rock: Handle<Image>,
+    spawn_xgrid: f32,
+    spawn_ygrid: f32,
+    )
+    {commands.spawn((
         OnMap,
-        GridPos { xgrid: 5.0, ygrid: 5.0 },
-        ObstaclePos { xgrid: 5.0, ygrid: 5.0 },
-        UpdateGridPos { xgrid: 5.0, ygrid: 5.0 },
+        GridPos { xgrid: 0.0, ygrid: 0.0 },
+        ObstaclePos { xgrid: 0.0, ygrid: 0.0 },
+        UpdateGridPos { xgrid: spawn_xgrid, ygrid: spawn_ygrid },
         SpriteBundle {
             texture: texture_handle_rock.clone(),
             transform: Transform::from_xyz(0.0, 0.0, 1.0),
             ..Default::default()
         },
-    ));
+    ));}
+    spawn_rock(&mut commands, texture_handle_rock.clone(), 1.0, 3.0);
+    spawn_rock(&mut commands, texture_handle_rock.clone(), 2.0, 5.0);
+    spawn_rock(&mut commands, texture_handle_rock.clone(), 2.0, 7.0);
+    spawn_rock(&mut commands, texture_handle_rock.clone(), 2.0, 9.0);
+    spawn_rock(&mut commands, texture_handle_rock.clone(), 3.0, 1.0);
+    spawn_rock(&mut commands, texture_handle_rock.clone(), 3.0, 3.0);
+    spawn_rock(&mut commands, texture_handle_rock.clone(), 3.0, 6.0);
+    spawn_rock(&mut commands, texture_handle_rock.clone(), 4.0, 2.0);
+    spawn_rock(&mut commands, texture_handle_rock.clone(), 4.0, 4.0);
+    spawn_rock(&mut commands, texture_handle_rock.clone(), 4.0, 8.0);
+    spawn_rock(&mut commands, texture_handle_rock.clone(), 5.0, 2.0);
+    spawn_rock(&mut commands, texture_handle_rock.clone(), 5.0, 9.0);
+    spawn_rock(&mut commands, texture_handle_rock.clone(), 7.0, 5.0);
+    spawn_rock(&mut commands, texture_handle_rock.clone(), 7.0, 3.0);
+    spawn_rock(&mut commands, texture_handle_rock.clone(), 8.0, 6.0);
+    spawn_rock(&mut commands, texture_handle_rock.clone(), 9.0, 3.0);
+    spawn_rock(&mut commands, texture_handle_rock.clone(), 12.0, 7.0);
+    spawn_rock(&mut commands, texture_handle_rock.clone(), 12.0, 9.0);
+    spawn_rock(&mut commands, texture_handle_rock.clone(), 13.0, 1.0);
+    spawn_rock(&mut commands, texture_handle_rock.clone(), 13.0, 3.0);
+    spawn_rock(&mut commands, texture_handle_rock.clone(), 13.0, 6.0);
+    spawn_rock(&mut commands, texture_handle_rock.clone(), 4.0, 12.0);
+    spawn_rock(&mut commands, texture_handle_rock.clone(), 4.0, 14.0);
+    spawn_rock(&mut commands, texture_handle_rock.clone(), 4.0, 13.0);
+    spawn_rock(&mut commands, texture_handle_rock.clone(), 5.0, 12.0);
+    spawn_rock(&mut commands, texture_handle_rock.clone(), 5.0, 16.0);
 
 // Example 2D array for the grid (0 for empty, 1 for grass)
     let mut rng = rand::thread_rng();
     let mut grid: [[u8; GRID_WIDTH]; GRID_HEIGHT] = [
-        [0; GRID_WIDTH]; GRID_HEIGHT
-    ];
+        [0; GRID_WIDTH]; GRID_HEIGHT];
 
     for y in 0..GRID_HEIGHT {
         for x in 0..GRID_WIDTH {
-            grid[y][x] = rng.gen_range(1..=4); // Generate a random value between 0 and 2
-        }
-    }
+            grid[y][x] = rng.gen_range(1..=4); }}
 
     // Spawn the sprites based on the grid
     for y in 0..GRID_HEIGHT {
@@ -115,7 +143,7 @@ commands.spawn((
                 3 => spawn_tile(&mut commands, texture_handle_grass3.clone(), x, y),
                 4 => spawn_tile(&mut commands, texture_handle_grass4.clone(), x, y),
                 5 => spawn_tile(&mut commands, texture_handle_water.clone(), x, y),
-                _ => {} // Handle empty or other tiles if needed
+                _ => {}
             }
         }
     }
@@ -147,8 +175,6 @@ fn move_entities(mut query: Query<(&GridPos, &mut Transform), With<OnMap>>) {
 
         transform.translation.x = new_x;
         transform.translation.y = new_y;
-
-
     };
 }
 
@@ -179,12 +205,10 @@ fn keyboard_movement(
             if  new_x == ObstaclePos.xgrid && new_y ==  ObstaclePos.ygrid {
                 blocked = true;
                 break;
-
         }
-
     }
 
-        // If not blocked, update the position
+        // If blocked, update the position to previous position
         if blocked {
             UpdateGridPos.xgrid = GridPos.xgrid;
             UpdateGridPos.ygrid = GridPos.ygrid;
@@ -205,72 +229,19 @@ fn update_pos(
             }
 
 }
-// Obstacle checking Movement function
 /*
+Referrence for potential time components
 fn keyboard_movement(
-    keys: Res<ButtonInput<KeyCode>>,
-    mut query: Query<&mut GridPos, With<OnMap>>,
-    obstacle_query: Query<&GridPos, With<Obstacle>>,
-) {
-    for mut GridPos in &mut query {
-        // Calculate the potential new position
-        let mut new_xgrid = GridPos.xgrid;
-        let mut new_ygrid = GridPos.ygrid;
-
-        if keys.just_pressed(KeyCode::ArrowLeft) {
-            new_xgrid -= 1.0;
-        } else if keys.just_pressed(KeyCode::ArrowRight) {
-            new_xgrid += 1.0;
-        } else if keys.just_pressed(KeyCode::ArrowUp) {
-            new_ygrid += 1.0;
-        } else if keys.just_pressed(KeyCode::ArrowDown) {
-            new_ygrid -= 1.0;
-        }
-
-        // Check for boundaries
-        if new_xgrid < 0.0 || new_xgrid >= F_GRID_WIDTH || new_ygrid < 0.0 || new_ygrid >= F_GRID_HEIGHT {
-            continue; // Skip the movement if it goes out of bounds
-        }
-
-        // Check for obstacles
-        let mut blocked = false;
-        for obstacle_pos in &obstacle_query {
-            if obstacle_pos.xgrid == new_xgrid && obstacle_pos.ygrid == new_ygrid {
-                blocked = true;
-                break;
-            }
-        }
-
-        // If not blocked, update the position
-        if !blocked {
-            GridPos.xgrid = new_xgrid;
-            GridPos.ygrid = new_ygrid;
-        }
-    }
-}*/
-/*
-fn keyboard_movement(
-    keys: Res<ButtonInput<KeyCode>>,
     time: Res<Time>,
-    mut query: Query<(&mut MovementTimer, &mut GridPos), With<OnMap>>
+    mut query: Query<(&mut MovementTimer)>
     ) {
-    for (mut timer, mut GridPos) in &mut query {
+    for (mut timer) in &mut query {
         // Update the timer
         timer.0.tick(time.delta());
 
         // Only move the player if the timer has finished
         if timer.0.finished() {
-            if keys.pressed(KeyCode::ArrowLeft) {
-                GridPos.xgrid -= 1.0;
-            } else if keys.pressed(KeyCode::ArrowRight) {
-                GridPos.xgrid += 1.0;
-            } else if keys.pressed(KeyCode::ArrowUp) {
-                GridPos.ygrid += 1.0;
-            } else if keys.pressed(KeyCode::ArrowDown) {
-                GridPos.ygrid -= 1.0;
-            }
-
-            // Restart the timer
+             // Restart the timer
             timer.0.reset();
         }
     }
