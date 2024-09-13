@@ -57,6 +57,43 @@ struct ObstaclePos {
 }
 
 #[derive(Component)]
+struct Health {
+    health: i32,
+    max_health: i32,
+}
+
+#[derive(Component)]
+struct Alive {
+    remove: bool,
+}
+
+#[derive(Component)]
+struct AttackImage {
+    time_visual: i32,
+    remove: bool,
+    xgrid: f32,
+    ygrid: f32,
+}
+
+#[derive(Component)]
+struct AttackDamage {
+    attack_damage: i32,
+    remove: bool,
+    xgrid: f32,
+    ygrid: f32,
+}
+
+#[derive(PartialEq)]
+enum Direction {
+North, East, South, West, None,
+}
+
+#[derive(Component)]
+struct PlayerAttackDirection {
+    direction:Direction,
+}
+
+#[derive(Component)]
 struct MovementTimer(Timer);
 
 fn setup(mut commands: Commands, asset_server: Res<AssetServer> /*, mut textures: ResMut<Assets<Image>> not needed currently*/) {
@@ -72,6 +109,7 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer> /*, mut textures
             Player,
             ObstaclePos { xgrid: 0.0, ygrid: 0.0 },
             OnMap,
+            PlayerAttackDirection {direction: Direction::None},
             MovementTimer(Timer::from_seconds(0.2, TimerMode::Repeating)),
         GridPos { xgrid: 0.0, ygrid: 0.0 },
         UpdateGridPos { xgrid: 0.0, ygrid: 0.0 },
@@ -90,6 +128,8 @@ fn spawn_rock(
     {commands.spawn((
         OnMap,
         GridPos { xgrid: 0.0, ygrid: 0.0 },
+        Health { health: 40, max_health: 40},
+        Alive { remove: false },
         ObstaclePos { xgrid: 0.0, ygrid: 0.0 },
         UpdateGridPos { xgrid: spawn_xgrid, ygrid: spawn_ygrid },
         SpriteBundle {
@@ -168,6 +208,7 @@ if aspect_ratio > target_aspect_ratio {
         projection.scaling_mode = ScalingMode::FixedHorizontal(320.0);
     }
 }
+
 fn move_entities(mut query: Query<(&GridPos, &mut Transform), With<OnMap>>) {
     for (GridPos, mut transform) in &mut query {
        let new_x = (GridPos.xgrid * CELL_SIZE) - (SCREEN_WIDTH / 2.0) + 5.0;
@@ -179,26 +220,121 @@ fn move_entities(mut query: Query<(&GridPos, &mut Transform), With<OnMap>>) {
 }
 
 
+fn remove_dead(
+    mut commands: Commands, query: Query<(Entity, &Alive)>
+    ) {
+for (entity, Alive) in query.iter() {
+    if Alive.remove {
+        commands.entity(entity).despawn();
+    }
+}
+}
+
+//Removes whole attack entity!
+fn remove_attack_image(
+    mut commands: Commands, query: Query<(Entity, &AttackImage)>
+    ) {
+for (entity, AttackImage) in query.iter() {
+    if AttackImage.remove {
+        commands.entity(entity).despawn();
+    }
+}
+}
+
+//Make it remove that component not whole entity!
+//Removes only attack damage component
+fn remove_attack_damage(
+    mut commands: Commands, query: Query<(Entity, &AttackDamage)>
+    ) {
+for (entity, AttackDamage) in query.iter() {
+    if AttackDamage.remove {
+        commands.entity(entity).despawn();
+    }
+}
+}
+fn health_check(
+mut query: Query<(&mut Alive, &Health)>
+    ) {
+    for (mut Alive, Health) in query.iter_mut() {
+        if Health.health <= 0 { Alive.remove = true; }
+    }
+}
+
+fn apply_damage() {
+
+}
+
+fn create_attack(
+    mut query: Query<(&GridPos, &mut PlayerAttackDirection), With<Player>>,
+    commands: &mut Commands,
+    texture_handle_attack: Handle<Image>,
+            ) {
+    for (GridPos, mut PlayerAttackDirection) in query.iter_mut() {
+   let mut attack_x = GridPos.xgrid; 
+   let mut attack_y = GridPos.ygrid; 
+   match
+       PlayerAttackDirection.direction {
+Direction::North => { attack_y += 1.0;}
+Direction::South => { attack_y -= 1.0;}
+Direction::East => { attack_x += 1.0;}
+Direction::West => { attack_x -= 1.0;}
+Direction::None => {}
+       }
+    {commands.spawn((
+AttackImage {
+    time_visual: 2,
+    remove: false,
+    xgrid: attack_x,
+    ygrid: attack_y,
+},
+
+AttackDamage {
+    attack_damage: 10,
+    remove: false,
+    xgrid: attack_x,
+    ygrid: attack_y,
+},
+        SpriteBundle {
+            texture: texture_handle_attack.clone(),
+            transform: Transform::from_xyz(0.0, 0.0, 3.0),
+            ..Default::default()
+        },
+    ));}
+
+    //direction enum(change back to None after)
+}
+}
+//Spawn attack image and calc then remove calc once processed
+//Make fn for image and calc
 fn keyboard_movement(
     keys: Res<ButtonInput<KeyCode>>,
-    mut query: Query<(&GridPos, &mut UpdateGridPos), With<Player>>,
+    mut query: Query<(&GridPos, &mut UpdateGridPos, &mut PlayerAttackDirection), With<Player>>,
     obstacle_query: Query<&ObstaclePos>,
 ) {
         let mut blocked = false;
         let mut new_x = 0.0;
         let mut new_y = 0.0;
-    for (GridPos, mut UpdateGridPos) in &mut query {
+    for (GridPos, mut UpdateGridPos, mut PlayerAttackDirection) in &mut query {
         UpdateGridPos.xgrid = GridPos.xgrid;
         UpdateGridPos.ygrid = GridPos.ygrid;
-            if keys.just_pressed(KeyCode::ArrowLeft) {
-               if UpdateGridPos.xgrid > 0.0 {UpdateGridPos.xgrid -= 1.0;}
-            } else if keys.just_pressed(KeyCode::ArrowRight) {
-               if UpdateGridPos.xgrid < F_GRID_WIDTH - 1.0 {UpdateGridPos.xgrid += 1.0;}
-            } else if keys.just_pressed(KeyCode::ArrowUp) {
+
+        if keys.pressed(KeyCode::KeyZ) {
+            if keys.just_pressed(KeyCode::ArrowUp) {PlayerAttackDirection.direction = Direction::North}
+            else if keys.just_pressed(KeyCode::ArrowDown) {PlayerAttackDirection.direction = Direction::South}
+            else if keys.just_pressed(KeyCode::ArrowLeft) {PlayerAttackDirection.direction = Direction::West}
+            else if keys.just_pressed(KeyCode::ArrowRight) {PlayerAttackDirection.direction = Direction::East}
+
+        }
+        else
+            if keys.just_pressed(KeyCode::ArrowUp) {
                if UpdateGridPos.ygrid < F_GRID_HEIGHT - 1.0 {UpdateGridPos.ygrid += 1.0;}
             } else if keys.just_pressed(KeyCode::ArrowDown) {
                if UpdateGridPos.ygrid > 0.0 {UpdateGridPos.ygrid -= 1.0;}
-            }
+            } else if keys.just_pressed(KeyCode::ArrowLeft) {
+               if UpdateGridPos.xgrid > 0.0 {UpdateGridPos.xgrid -= 1.0;}
+            } else if keys.just_pressed(KeyCode::ArrowRight) {
+               if UpdateGridPos.xgrid < F_GRID_WIDTH - 1.0 {UpdateGridPos.xgrid += 1.0;}
+            } 
         new_x = UpdateGridPos.xgrid;
         new_y = UpdateGridPos.ygrid;
             for ObstaclePos in &obstacle_query {
