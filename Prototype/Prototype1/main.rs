@@ -30,6 +30,12 @@ fn main() {
         .add_systems(Update, move_entities)
         .add_systems(Update, update_pos.after(move_entities))
         .add_systems(Update, keyboard_movement)
+        .add_systems(Update, remove_attack_image)
+        .add_systems(Update, health_check)
+        .add_systems(Update, remove_dead)
+        .add_systems(Update, create_attack.before(move_entities))
+        .add_systems(Update, remove_attack_damage)
+        .add_systems(Update, apply_damage)
         .run();
 }
 #[derive(Component)]
@@ -69,7 +75,7 @@ struct Alive {
 
 #[derive(Component)]
 struct AttackImage {
-    time_visual: i32,
+    time_visual: Timer,
     remove: bool,
     xgrid: f32,
     ygrid: f32,
@@ -96,7 +102,7 @@ struct PlayerAttackDirection {
 #[derive(Component)]
 struct MovementTimer(Timer);
 
-fn setup(mut commands: Commands, asset_server: Res<AssetServer> /*, mut textures: ResMut<Assets<Image>> not needed currently*/) {
+fn setup(mut commands: Commands, asset_server: Res<AssetServer>, mut textures: ResMut<Assets<Image>>) {
     let texture_handle_grass1 = asset_server.load("grass1.png");
     let texture_handle_grass2 = asset_server.load("grass2.png");
     let texture_handle_grass3 = asset_server.load("grass3.png");
@@ -110,7 +116,6 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer> /*, mut textures
             ObstaclePos { xgrid: 0.0, ygrid: 0.0 },
             OnMap,
             PlayerAttackDirection {direction: Direction::None},
-            MovementTimer(Timer::from_seconds(0.2, TimerMode::Repeating)),
         GridPos { xgrid: 0.0, ygrid: 0.0 },
         UpdateGridPos { xgrid: 0.0, ygrid: 0.0 },
         SpriteBundle {
@@ -193,6 +198,8 @@ fn spawn_rock(
     commands.spawn(Camera2dBundle::default());
 }
 
+
+
 fn resize_camera(
     mut query: Query<&mut OrthographicProjection, With<Camera2d>>,
     windows: Query<&Window, With<PrimaryWindow>>,
@@ -209,6 +216,20 @@ if aspect_ratio > target_aspect_ratio {
     }
 }
 
+//Potential problem! Later when entities don't have a ObstaclePos this won't work
+//Perhaps make fn with without ObstaclePos
+fn update_pos(
+    mut query: Query<(&mut GridPos, &mut ObstaclePos, &UpdateGridPos)>,
+    ) {
+    for (mut GridPos, mut ObstaclePos, UpdateGridPos) in &mut query {
+        GridPos.xgrid = UpdateGridPos.xgrid;
+        GridPos.ygrid = UpdateGridPos.ygrid;
+        ObstaclePos.xgrid = GridPos.xgrid;
+        ObstaclePos.ygrid = GridPos.ygrid;
+            }
+
+}
+
 fn move_entities(mut query: Query<(&GridPos, &mut Transform), With<OnMap>>) {
     for (GridPos, mut transform) in &mut query {
        let new_x = (GridPos.xgrid * CELL_SIZE) - (SCREEN_WIDTH / 2.0) + 5.0;
@@ -219,6 +240,13 @@ fn move_entities(mut query: Query<(&GridPos, &mut Transform), With<OnMap>>) {
     };
 }
 
+fn health_check(
+mut query: Query<(&mut Alive, &Health)>
+    ) {
+    for (mut Alive, Health) in query.iter_mut() {
+        if Health.health <= 0 { Alive.remove = true; }
+    }
+}
 
 fn remove_dead(
     mut commands: Commands, query: Query<(Entity, &Alive)>
@@ -230,82 +258,6 @@ for (entity, Alive) in query.iter() {
 }
 }
 
-//Removes whole attack entity!
-fn remove_attack_image(
-    mut commands: Commands, query: Query<(Entity, &AttackImage)>
-    ) {
-for (entity, AttackImage) in query.iter() {
-    if AttackImage.remove {
-        commands.entity(entity).despawn();
-    }
-}
-}
-
-//Make it remove that component not whole entity!
-//Removes only attack damage component
-fn remove_attack_damage(
-    mut commands: Commands, query: Query<(Entity, &AttackDamage)>
-    ) {
-for (entity, AttackDamage) in query.iter() {
-    if AttackDamage.remove {
-        commands.entity(entity).despawn();
-    }
-}
-}
-fn health_check(
-mut query: Query<(&mut Alive, &Health)>
-    ) {
-    for (mut Alive, Health) in query.iter_mut() {
-        if Health.health <= 0 { Alive.remove = true; }
-    }
-}
-
-fn apply_damage() {
-
-}
-
-fn create_attack(
-    mut query: Query<(&GridPos, &mut PlayerAttackDirection), With<Player>>,
-    commands: &mut Commands,
-    texture_handle_attack: Handle<Image>,
-            ) {
-    for (GridPos, mut PlayerAttackDirection) in query.iter_mut() {
-   let mut attack_x = GridPos.xgrid; 
-   let mut attack_y = GridPos.ygrid; 
-   match
-       PlayerAttackDirection.direction {
-Direction::North => { attack_y += 1.0;}
-Direction::South => { attack_y -= 1.0;}
-Direction::East => { attack_x += 1.0;}
-Direction::West => { attack_x -= 1.0;}
-Direction::None => {}
-       }
-    {commands.spawn((
-AttackImage {
-    time_visual: 2,
-    remove: false,
-    xgrid: attack_x,
-    ygrid: attack_y,
-},
-
-AttackDamage {
-    attack_damage: 10,
-    remove: false,
-    xgrid: attack_x,
-    ygrid: attack_y,
-},
-        SpriteBundle {
-            texture: texture_handle_attack.clone(),
-            transform: Transform::from_xyz(0.0, 0.0, 3.0),
-            ..Default::default()
-        },
-    ));}
-
-    //direction enum(change back to None after)
-}
-}
-//Spawn attack image and calc then remove calc once processed
-//Make fn for image and calc
 fn keyboard_movement(
     keys: Res<ButtonInput<KeyCode>>,
     mut query: Query<(&GridPos, &mut UpdateGridPos, &mut PlayerAttackDirection), With<Player>>,
@@ -318,6 +270,7 @@ fn keyboard_movement(
         UpdateGridPos.xgrid = GridPos.xgrid;
         UpdateGridPos.ygrid = GridPos.ygrid;
 
+            PlayerAttackDirection.direction = Direction::None;
         if keys.pressed(KeyCode::KeyZ) {
             if keys.just_pressed(KeyCode::ArrowUp) {PlayerAttackDirection.direction = Direction::North}
             else if keys.just_pressed(KeyCode::ArrowDown) {PlayerAttackDirection.direction = Direction::South}
@@ -352,34 +305,82 @@ fn keyboard_movement(
             }
 
 }
-//Potential problem! Later when entities don't have a ObstaclePos this won't work
-//Perhaps make fn with without ObstaclePos
-fn update_pos(
-    mut query: Query<(&mut GridPos, &mut ObstaclePos, &UpdateGridPos)>,
-    ) {
-    for (mut GridPos, mut ObstaclePos, UpdateGridPos) in &mut query {
-        GridPos.xgrid = UpdateGridPos.xgrid;
-        GridPos.ygrid = UpdateGridPos.ygrid;
-        ObstaclePos.xgrid = GridPos.xgrid;
-        ObstaclePos.ygrid = GridPos.ygrid;
-            }
+fn create_attack(
+    mut query: Query<(&GridPos, &mut PlayerAttackDirection), With<Player>>,
+     mut commands: Commands,
+asset_server: Res<AssetServer>,
+            ) {
+//BUG FIX: make it so you can aim off the screen
+    let texture_handle_attack = asset_server.load("attack.png");
+    for (GridPos, mut PlayerAttackDirection) in query.iter_mut() {
+   let mut attack_x = GridPos.xgrid; 
+   let mut attack_y = GridPos.ygrid; 
+   match
+       PlayerAttackDirection.direction {
+Direction::North => { attack_y += 1.0;}
+Direction::South => { attack_y -= 1.0;}
+Direction::East => { attack_x += 1.0;}
+Direction::West => { attack_x -= 1.0;}
+Direction::None => {}
+       }
+   if PlayerAttackDirection.direction != Direction::None
+    {commands.spawn((
+AttackImage {
+    time_visual: Timer::from_seconds(0.4, TimerMode::Once),
+    remove: false,
+    xgrid: attack_x,
+    ygrid: attack_y,
+},
+
+GridPos {
+    xgrid: attack_x,
+    ygrid: attack_y,
+},
+
+AttackDamage {
+    attack_damage: 10,
+    remove: false,
+    xgrid: attack_x,
+    ygrid: attack_y,
+},
+OnMap,
+
+        SpriteBundle {
+            texture: texture_handle_attack.clone(),
+            transform: Transform::from_xyz(0.0, 0.0, 3.0),
+            ..Default::default()
+        },
+    ));}
+    //direction enum(change back to None after)
+}
 
 }
-/*
-Referrence for potential time components
-fn keyboard_movement(
-    time: Res<Time>,
-    mut query: Query<(&mut MovementTimer)>
-    ) {
-    for (mut timer) in &mut query {
-        // Update the timer
-        timer.0.tick(time.delta());
 
-        // Only move the player if the timer has finished
-        if timer.0.finished() {
-             // Restart the timer
-            timer.0.reset();
-        }
+//Make it remove that component not whole entity!
+//Removes only attack damage component
+fn remove_attack_damage(
+    mut commands: Commands, query: Query<(Entity, &AttackDamage)>
+    ) {
+for (entity, AttackDamage) in query.iter() {
+    if AttackDamage.remove  {
+        commands.entity(entity).despawn();
     }
 }
-*/
+}
+
+//Removes whole attack entity!
+fn remove_attack_image(
+    mut commands: Commands, mut query: Query<(Entity, &mut AttackImage,)>, time: Res<Time>,
+    ) {
+for (entity, mut AttackImage) in query.iter_mut() {
+    AttackImage.time_visual.tick(time.delta());
+    if AttackImage.time_visual.finished() {AttackImage.remove = true;}
+    if AttackImage.remove {
+        commands.entity(entity).despawn();
+    }
+}
+}
+
+fn apply_damage() {
+}
+
