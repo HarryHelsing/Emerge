@@ -34,8 +34,8 @@ fn main() {
         .add_systems(Update, health_check)
         .add_systems(Update, remove_dead)
         .add_systems(Update, create_attack.before(move_entities))
-        .add_systems(Update, remove_attack_damage)
-        .add_systems(Update, apply_damage)
+        .add_systems(Update, apply_damage.before(remove_attack_damage))
+        .add_systems(Update, remove_attack_damage.after(apply_damage))
         .run();
 }
 #[derive(Component)]
@@ -338,7 +338,7 @@ GridPos {
 },
 
 AttackDamage {
-    attack_damage: 10,
+    attack_damage: 20,
     remove: false,
     xgrid: attack_x,
     ygrid: attack_y,
@@ -359,11 +359,11 @@ OnMap,
 //Make it remove that component not whole entity!
 //Removes only attack damage component
 fn remove_attack_damage(
-    mut commands: Commands, query: Query<(Entity, &AttackDamage)>
+    mut commands: Commands, mut query: Query<(Entity, &mut AttackDamage)>
     ) {
-for (entity, AttackDamage) in query.iter() {
+for (entity, mut AttackDamage) in query.iter_mut() {
     if AttackDamage.remove  {
-        commands.entity(entity).despawn();
+            commands.entity(entity).remove::<AttackDamage>();
     }
 }
 }
@@ -380,7 +380,32 @@ for (entity, mut AttackImage) in query.iter_mut() {
     }
 }
 }
+//Change AttackDamage.remove to true after
+fn apply_damage(
+    mut health_query: Query<(&mut Health, &GridPos)>,
+    mut attack_query: Query<(&mut AttackDamage, &GridPos)>,
+) {
+    for (mut attack_damage, attack_pos) in attack_query.iter_mut() {
+        // Iterate over all entities with Health and GridPos components
+        for (mut health, health_pos) in health_query.iter_mut() {
+            // Check if the attack entity's position matches the health entity's position
+            if attack_pos.xgrid == health_pos.xgrid && attack_pos.ygrid == health_pos.ygrid {
+                // Apply damage to the health component
+                health.health -= attack_damage.attack_damage;
 
-fn apply_damage() {
+                // Ensure health doesn't go below 0
+                if health.health < 0 {
+                    health.health = 0;
+                }
+
+                // Mark the attack for removal after applying damage
+                attack_damage.remove = true;
+
+                // Since the attack is targeted at a single entity, we can break the loop once damage is applied
+                break;
+            }
+        }
+    }
 }
+
 
