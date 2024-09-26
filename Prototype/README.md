@@ -4,8 +4,8 @@
 -[] Create Enemies
 -[x] Create Obstacles
 -[x] Create Movement Logic
--[] Create Attack Logic
+-[x] Create Attack Logic
 -[x] Create Tilemap Function
 -[x] Set Camera
--[] Create death logic
--[] Refine and tweek controls
+-[] Create death logic(for enemy done, for player not)
+-[x] Refine and tweek controls
