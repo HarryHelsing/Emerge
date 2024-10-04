@@ -1,5 +1,6 @@
 # OffBeast
 Grid based, pixel art, realtime-turnbased-ish, game where you play as a blob in the wild.
+Written is Rust, using the Bevy game engine.
 
 Plans for the near future include:
 Implementing the short, three second timer
