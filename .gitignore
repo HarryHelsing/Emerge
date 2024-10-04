@@ -1,0 +1,18 @@
+# Ignore the target directory, where Cargo builds your project
+/Prototype/Prototype2/target/
+
+# Ignore compiled object files, dependency files, and binaries
+*.o
+*.d
+*.bin
+
+# Ignore editor-specific files (optional, but common)
+.DS_Store
+*.swp
+*.swo
+
+# Ignore backup files (optional)
+*~
+
+# Ignore Cargo lock file if you don't want to commit it
+Cargo.lock
