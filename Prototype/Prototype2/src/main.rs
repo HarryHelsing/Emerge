@@ -25,18 +25,18 @@ fn main() {
                 ..Default::default()
             }),
         )
-        .add_systems(Startup, setup)
-        .add_systems(Update, resize_camera)
-        .add_systems(Update, move_entities)
+        .add_systems(Startup, setup)//ASSOCIATED EVENTS
+        .add_systems(Update, resize_camera)//Window resize event? (check for edge case)
+        .add_systems(Update, move_entities)//After world tick?
         .add_systems(Update, update_pos.after(move_entities))
-        .add_systems(Update, keyboard_movement)
-        .add_systems(Update, remove_attack_image)
-        .add_systems(Update, health_check)
+        .add_systems(Update, keyboard_movement)//After key pressed
+        .add_systems(Update, remove_attack_image)//After what? timer?
+        .add_systems(Update, health_check)//After damage event? Or health change
         .add_systems(Update, remove_dead)
         .add_systems(Update, create_attack.before(move_entities))
         .add_systems(Update, apply_damage.before(remove_attack_damage))
         .add_systems(Update, remove_attack_damage.after(apply_damage))
-        .run();
+        .run();//key events? health_change, tick, attack, resize, key_press
 }
 #[derive(Component)]
 struct Player;
@@ -407,5 +407,28 @@ fn apply_damage(
         }
     }
 }
+// Starting to feel it's time for a redesign, it's doing a lot more work than needed.
+// Use events to cut down on work, e.g. when keypressed trigger keyboard input fn, when x moves,
+// when x attacks ect
+/*
+fn spawn_fire_critter(
+    commands: &mut Commands,
+    texture_handle_fire_critter: Handle<Image>,
+    spawn_xgrid: f32,
+    spawn_ygrid: f32,
+    )
+    {commands.spawn((
+        OnMap,
+        GridPos { xgrid: 0.0, ygrid: 0.0 },
+        Health { health: 20, max_health: 20},
+        Alive { remove: false },
+        ObstaclePos { xgrid: 0.0, ygrid: 0.0 },
+        UpdateGridPos { xgrid: spawn_xgrid, ygrid: spawn_ygrid },
+        SpriteBundle {
+            texture: texture_handle_fire_critter.clone(),
+            transform: Transform::from_xyz(0.0, 0.0, 1.0),
+            ..Default::default()
+        },
+    ));}
 
-
+*/
