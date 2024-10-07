@@ -263,6 +263,7 @@ fn keyboard_movement(
     mut query: Query<(&GridPos, &mut UpdateGridPos, &mut PlayerAttackDirection), With<Player>>,
     obstacle_query: Query<&ObstaclePos>,
 ) {
+    if keys.get_pressed().next().is_some() {
         let mut blocked = false;
         let mut new_x = 0.0;
         let mut new_y = 0.0;
@@ -303,7 +304,7 @@ fn keyboard_movement(
             UpdateGridPos.ygrid = GridPos.ygrid;
         }
             }
-
+        }
 }
 fn create_attack(
     mut query: Query<(&GridPos, &mut PlayerAttackDirection), With<Player>>,

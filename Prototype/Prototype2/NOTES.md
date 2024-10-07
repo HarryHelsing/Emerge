@@ -16,3 +16,9 @@
 ## Creating Health Bars and Timer bars
 - Design a health bar that matches player health
 - Design timer bar that matches player time before turn end
+
+### Braindump
+Learn to use states for advanced enemy ai, events for performance
+
+### ToDo:
+- Stop resize fn running every frame
