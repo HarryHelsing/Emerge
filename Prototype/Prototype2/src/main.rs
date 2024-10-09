@@ -1,6 +1,7 @@
 use bevy::prelude::*;
 use bevy::window::PrimaryWindow;
 use bevy::render::camera::ScalingMode;
+use bevy::window::WindowResized;
 use tiles::*;
 use rand::Rng;
 mod tiles;
@@ -25,18 +26,20 @@ fn main() {
                 ..Default::default()
             }),
         )
-        .add_systems(Startup, setup)//ASSOCIATED EVENTS
-        .add_systems(Update, resize_camera)//Window resize event? (check for edge case)
-        .add_systems(Update, move_entities)//After world tick?
+        .insert_resource(FiveSecondTimer(Timer::from_seconds(5.0, TimerMode::Repeating)))
+        .add_systems(Startup, setup)//Optimisations
+        .add_systems(Update, resize_camera)//done
+        .add_systems(Update, move_entities)//After world tick? - question: should i implement this first? probably not?
         .add_systems(Update, update_pos.after(move_entities))
-        .add_systems(Update, keyboard_movement)//After key pressed
+        .add_systems(Update, keyboard_movement)//done
         .add_systems(Update, remove_attack_image)//After what? timer?
         .add_systems(Update, health_check)//After damage event? Or health change
         .add_systems(Update, remove_dead)
         .add_systems(Update, create_attack.before(move_entities))
         .add_systems(Update, apply_damage.before(remove_attack_damage))
         .add_systems(Update, remove_attack_damage.after(apply_damage))
-        .run();//key events? health_change, tick, attack, resize, key_press
+        .add_systems(Update, timed_spawner)
+        .run();//key events? health_change, tick, attack
 }
 #[derive(Component)]
 struct Player;
@@ -101,6 +104,9 @@ struct PlayerAttackDirection {
 
 #[derive(Component)]
 struct MovementTimer(Timer);
+
+#[derive(Resource)]
+struct FiveSecondTimer(Timer);
 
 fn setup(mut commands: Commands, asset_server: Res<AssetServer>, mut textures: ResMut<Assets<Image>>) {
     let texture_handle_grass1 = asset_server.load("grass1.png");
@@ -203,7 +209,9 @@ fn spawn_rock(
 fn resize_camera(
     mut query: Query<&mut OrthographicProjection, With<Camera2d>>,
     windows: Query<&Window, With<PrimaryWindow>>,
+    mut resize_events: EventReader<WindowResized>,
 ) {
+    if !resize_events.is_empty() {
     let mut projection = query.single_mut();
     let window = windows.single();
 
@@ -213,6 +221,7 @@ if aspect_ratio > target_aspect_ratio {
         projection.scaling_mode = ScalingMode::FixedVertical(180.0);
     } else {
         projection.scaling_mode = ScalingMode::FixedHorizontal(320.0);
+    }
     }
 }
 
@@ -257,7 +266,7 @@ for (entity, Alive) in query.iter() {
     }
 }
 }
-
+//make events for movement and attack?
 fn keyboard_movement(
     keys: Res<ButtonInput<KeyCode>>,
     mut query: Query<(&GridPos, &mut UpdateGridPos, &mut PlayerAttackDirection), With<Player>>,
@@ -382,6 +391,7 @@ for (entity, mut AttackImage) in query.iter_mut() {
 }
 }
 //Change AttackDamage.remove to true after
+                // Health change event?
 fn apply_damage(
     mut health_query: Query<(&mut Health, &GridPos)>,
     mut attack_query: Query<(&mut AttackDamage, &GridPos)>,
@@ -408,10 +418,24 @@ fn apply_damage(
         }
     }
 }
+fn timed_spawner(
+time: Res<Time>,
+mut timer: ResMut<FiveSecondTimer>,
+    mut commands: Commands,
+asset_server: Res<AssetServer>,
+
+
+    )
+{
+if timer. 0.tick(time.delta()).just_finished() {
+        let texture_handle_fire_critter = asset_server.load("firecritter.png");
+    println!("Boop");
+    spawn_fire_critter(&mut commands, texture_handle_fire_critter.clone(), 5.0, 3.0)
+}
+}
 // Starting to feel it's time for a redesign, it's doing a lot more work than needed.
 // Use events to cut down on work, e.g. when keypressed trigger keyboard input fn, when x moves,
 // when x attacks ect
-/*
 fn spawn_fire_critter(
     commands: &mut Commands,
     texture_handle_fire_critter: Handle<Image>,
@@ -431,5 +455,3 @@ fn spawn_fire_critter(
             ..Default::default()
         },
     ));}
-
-*/
