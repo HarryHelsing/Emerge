@@ -27,9 +27,10 @@ fn main() {
             }),
         )
         .insert_resource(FiveSecondTimer(Timer::from_seconds(5.0, TimerMode::Repeating)))
+        .insert_resource(OneSecondTimer(Timer::from_seconds(1.0, TimerMode::Repeating)))
         .add_systems(Startup, setup)//Optimisations
         .add_systems(Update, resize_camera)//done
-        .add_systems(Update, move_entities)//After world tick? - question: should i implement this first? probably not?
+        .add_systems(Update, move_entities)//After world tick
         .add_systems(Update, update_pos.after(move_entities))
         .add_systems(Update, keyboard_movement)//done
         .add_systems(Update, remove_attack_image)//After what? timer?
@@ -39,6 +40,7 @@ fn main() {
         .add_systems(Update, apply_damage.before(remove_attack_damage))
         .add_systems(Update, remove_attack_damage.after(apply_damage))
         .add_systems(Update, timed_spawner)
+        .add_systems(Update, timed_movement)
         .run();//key events? health_change, tick, attack
 }
 #[derive(Component)]
@@ -46,6 +48,9 @@ struct Player;
 
 #[derive(Component)]
 struct OnMap;
+
+#[derive(Component)]
+struct Creature;
 
 #[derive(Component)]
 struct GridPos {
@@ -107,6 +112,9 @@ struct MovementTimer(Timer);
 
 #[derive(Resource)]
 struct FiveSecondTimer(Timer);
+
+#[derive(Resource)]
+struct OneSecondTimer(Timer);
 
 fn setup(mut commands: Commands, asset_server: Res<AssetServer>, mut textures: ResMut<Assets<Image>>) {
     let texture_handle_grass1 = asset_server.load("grass1.png");
@@ -423,14 +431,34 @@ time: Res<Time>,
 mut timer: ResMut<FiveSecondTimer>,
     mut commands: Commands,
 asset_server: Res<AssetServer>,
-
-
     )
 {
 if timer. 0.tick(time.delta()).just_finished() {
         let texture_handle_fire_critter = asset_server.load("firecritter.png");
-    println!("Boop");
+    println!("Boop: spawn enemy");
     spawn_fire_critter(&mut commands, texture_handle_fire_critter.clone(), 5.0, 3.0)
+}
+}
+
+//Idea: Make a generic enemy move function and add components to enemy entities to describe their
+//movement, making the movement modular, aka run away movement, aggressive, passive, random,
+//aggressive range X, run away hp X, enable charge (move 2 squares at once)T/F, ect
+fn timed_movement(
+time: Res<Time>,
+mut timer: ResMut<OneSecondTimer>,
+mut enemy_query: Query<&mut GridPos, (With<Creature>, Without<Player>)>,
+mut player_query: Query<&GridPos, (With<Player>, Without<Creature>)>,
+    )
+{
+if timer. 0.tick(time.delta()).just_finished() {
+    println!("Blop: Move Enemy");
+    for mut GridPos in enemy_query.iter_mut() {
+println!("blep: query");
+//Need to query player gridpos and calculate which way to go, also create a random function to move
+//in one of two axis
+//Also think of obstacle collision, ect
+    }
+ 
 }
 }
 // Starting to feel it's time for a redesign, it's doing a lot more work than needed.
@@ -444,6 +472,7 @@ fn spawn_fire_critter(
     )
     {commands.spawn((
         OnMap,
+        Creature,
         GridPos { xgrid: 0.0, ygrid: 0.0 },
         Health { health: 20, max_health: 20},
         Alive { remove: false },
