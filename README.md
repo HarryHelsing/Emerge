@@ -16,3 +16,7 @@ Render background
 Render and create control for player character
 Create obstacles and collision detection
 Create player attack which deals damage and destroys obstacles
+
+## Controls
+arrow keys to move
+hold z plus arrow keys to attack
