@@ -452,8 +452,16 @@ mut player_query: Query<&GridPos, (With<Player>, Without<Creature>)>,
 {
 if timer. 0.tick(time.delta()).just_finished() {
     println!("Blop: Move Enemy");
+    let mut temp_x = 0.0;
+    let mut temp_y = 0.0;
+    for GridPos in player_query.iter() {
+temp_x = GridPos.xgrid;
+temp_y = GridPos.ygrid;
+    }
     for mut GridPos in enemy_query.iter_mut() {
-println!("blep: query");
+println!("Blep: query: x = {}, y = {}",temp_x, temp_y);
+//Do maths here player x vs creature x ect
+//maybe make left right, up down enums to capture relative location of player? Too complex?
 //Need to query player gridpos and calculate which way to go, also create a random function to move
 //in one of two axis
 //Also think of obstacle collision, ect
