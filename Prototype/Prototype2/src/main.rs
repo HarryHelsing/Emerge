@@ -460,10 +460,10 @@ temp_y = GridPos.ygrid;
     }
     for mut GridPos in enemy_query.iter_mut() {
 println!("Blep: query: x = {}, y = {}",temp_x, temp_y);
-//Do maths here player x vs creature x ect
+//if GridPos.xgrid != temp_x {if GridPos.xgrid > temp_x output xgrid -1, else xgrid +1}
 //maybe make left right, up down enums to capture relative location of player? Too complex?
-//Need to query player gridpos and calculate which way to go, also create a random function to move
-//in one of two axis
+//Maybe just output location x + 1, x, x -1, ect
+//create a random function to move in one of two axis
 //Also think of obstacle collision, ect
     }
  
