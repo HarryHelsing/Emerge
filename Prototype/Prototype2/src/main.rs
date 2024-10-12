@@ -27,6 +27,7 @@ fn main() {
             }),
         )
         .insert_resource(FiveSecondTimer(Timer::from_seconds(5.0, TimerMode::Repeating)))
+        .insert_resource(TwoSecondTimer(Timer::from_seconds(2.0, TimerMode::Repeating)))
         .insert_resource(OneSecondTimer(Timer::from_seconds(1.0, TimerMode::Repeating)))
         .add_systems(Startup, setup)//Optimisations
         .add_systems(Update, resize_camera)//done
@@ -41,6 +42,7 @@ fn main() {
         .add_systems(Update, remove_attack_damage.after(apply_damage))
         .add_systems(Update, timed_spawner)
         .add_systems(Update, timed_movement)
+        .add_systems(Update, timed_attack)
         .run();//key events? health_change, tick, attack
 }
 #[derive(Component)]
@@ -108,13 +110,21 @@ struct PlayerAttackDirection {
 }
 
 #[derive(Component)]
+struct CreatureAttackDirection {
+    direction:Direction,
+}
+
+#[derive(Component)]
 struct MovementTimer(Timer);
 
 #[derive(Resource)]
-struct FiveSecondTimer(Timer);
+struct OneSecondTimer(Timer);
 
 #[derive(Resource)]
-struct OneSecondTimer(Timer);
+struct TwoSecondTimer(Timer);
+
+#[derive(Resource)]
+struct FiveSecondTimer(Timer);
 
 fn setup(mut commands: Commands, asset_server: Res<AssetServer>, mut textures: ResMut<Assets<Image>>) {
     let texture_handle_grass1 = asset_server.load("grass1.png");
@@ -138,6 +148,7 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>, mut textures: R
             ..Default::default()
         },
     ));
+
 fn spawn_rock(
     commands: &mut Commands,
     texture_handle_rock: Handle<Image>,
@@ -446,25 +457,118 @@ if timer. 0.tick(time.delta()).just_finished() {
 fn timed_movement(
 time: Res<Time>,
 mut timer: ResMut<OneSecondTimer>,
-mut enemy_query: Query<&mut GridPos, (With<Creature>, Without<Player>)>,
+mut enemy_query: Query<(&mut GridPos, &mut UpdateGridPos), (With<Creature>, Without<Player>)>,
 mut player_query: Query<&GridPos, (With<Player>, Without<Creature>)>,
     )
 {
 if timer. 0.tick(time.delta()).just_finished() {
-    println!("Blop: Move Enemy");
+    println!("Blop: Creature MOVE");
+    enum UpDown {
+    Up,
+    Down,
+    None,
+    }
+    enum LeftRight {
+    Left,
+    Right,
+    None,
+    }
+    let mut creature_updown = UpDown::None;
+    let mut creature_leftright = LeftRight::None;
     let mut temp_x = 0.0;
     let mut temp_y = 0.0;
+
     for GridPos in player_query.iter() {
 temp_x = GridPos.xgrid;
 temp_y = GridPos.ygrid;
     }
-    for mut GridPos in enemy_query.iter_mut() {
+
+    for (mut GridPos, mut UpdateGridPos) in enemy_query.iter_mut() {
+        if GridPos.xgrid != temp_x {
+            if GridPos.xgrid > temp_x {creature_leftright = LeftRight::Right}
+            else {creature_leftright = LeftRight::Left};
+        }
+        if GridPos.ygrid != temp_y {
+            if GridPos.ygrid > temp_y {creature_updown = UpDown::Up}
+            else {creature_updown = UpDown::Down};
+        }
+        match creature_leftright {
+    LeftRight::None => println!("Brip: Creature didn't move left/right"),
+    LeftRight::Right => {UpdateGridPos.xgrid = UpdateGridPos.xgrid - 1.0}
+    LeftRight::Left => {UpdateGridPos.xgrid = UpdateGridPos.xgrid + 1.0}
+        }
+
+         match creature_updown {
+    UpDown::None => println!("Brep: Creature didn't move up/down"),
+    UpDown::Up => {UpdateGridPos.ygrid = UpdateGridPos.ygrid - 1.0}
+    UpDown::Down => {UpdateGridPos.ygrid = UpdateGridPos.ygrid + 1.0}
+       }
+         creature_updown = UpDown::None;
+         creature_leftright = LeftRight::None;
+        //use local enum for up, down, none, and left, right, none, then use match statement to
+        //decide direction
 println!("Blep: query: x = {}, y = {}",temp_x, temp_y);
 //if GridPos.xgrid != temp_x {if GridPos.xgrid > temp_x output xgrid -1, else xgrid +1}
 //maybe make left right, up down enums to capture relative location of player? Too complex?
 //Maybe just output location x + 1, x, x -1, ect
 //create a random function to move in one of two axis
 //Also think of obstacle collision, ect
+    }
+ 
+}
+}
+
+fn timed_attack(
+time: Res<Time>,
+mut timer: ResMut<TwoSecondTimer>,
+mut enemy_query: Query<(&mut GridPos, &mut CreatureAttackDirection), (With<Creature>, Without<Player>)>,
+mut player_query: Query<&GridPos, (With<Player>, Without<Creature>)>,
+    )
+{
+if timer. 0.tick(time.delta()).just_finished() {
+    println!("Blup: Creature ATTACk");
+    enum UpDown {
+    Up,
+    Down,
+    None,
+    }
+    enum LeftRight {
+    Left,
+    Right,
+    None,
+    }
+    let mut creature_updown = UpDown::None;
+    let mut creature_leftright = LeftRight::None;
+    let mut temp_x = 0.0;
+    let mut temp_y = 0.0;
+
+    for GridPos in player_query.iter() {
+temp_x = GridPos.xgrid;
+temp_y = GridPos.ygrid;
+    }
+
+    for (mut GridPos, mut CreatureAttackDirection) in enemy_query.iter_mut() {
+        if GridPos.xgrid != temp_x {
+            if GridPos.xgrid > temp_x {creature_leftright = LeftRight::Right}
+            else {creature_leftright = LeftRight::Left};
+        }
+        if GridPos.ygrid != temp_y {
+            if GridPos.ygrid > temp_y {creature_updown = UpDown::Up}
+            else {creature_updown = UpDown::Down};
+        }
+        match creature_updown {
+    UpDown::None => println!("Brep: Creature didn't move up/down"),
+    UpDown::Up => {CreatureAttackDirection.direction = Direction::North}
+    UpDown::Down => {CreatureAttackDirection.direction = Direction::North}
+       }
+        match creature_leftright {
+    LeftRight::None => println!("Brip: Creature didn't move left/right"),
+    LeftRight::Right => {CreatureAttackDirection.direction = Direction::North}
+    LeftRight::Left => {CreatureAttackDirection.direction = Direction::North}
+        }
+
+         creature_updown = UpDown::None;
+         creature_leftright = LeftRight::None;
     }
  
 }
@@ -484,6 +588,7 @@ fn spawn_fire_critter(
         GridPos { xgrid: 0.0, ygrid: 0.0 },
         Health { health: 20, max_health: 20},
         Alive { remove: false },
+        CreatureAttackDirection {direction: Direction::None},
         ObstaclePos { xgrid: 0.0, ygrid: 0.0 },
         UpdateGridPos { xgrid: spawn_xgrid, ygrid: spawn_ygrid },
         SpriteBundle {
