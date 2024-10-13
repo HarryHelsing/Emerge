@@ -1,11 +1,11 @@
 ### Aims of the OffBeast prototype
--[] Create Rhythm Movement system(redesign has happened, rhythm mechanics have been replaces with short timer design)
--[x] Create Player Character
--[x] Create Enemies
--[x] Create Obstacles
--[x] Create Movement Logic
--[x] Create Attack Logic
--[x] Create Tilemap Function
--[x] Set Camera
--[x] Create death logic
--[x] Refine and tweek controls
+- *not done* Create Rhythm Movement system(redesign has happened, rhythm mechanics have been replaces with short timer design)
+- *done* Create Player Character
+- *done* Create Enemies
+- *done* Create Obstacles
+- *done* Create Movement Logic
+- *done* Create Attack Logic
+- *done* Create Tilemap Function
+- *done* Set Camera
+- *done* Create death logic
+- *done* Refine and tweek controls
