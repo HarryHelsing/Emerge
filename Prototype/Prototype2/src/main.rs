@@ -658,7 +658,7 @@ mut player_query: Query<&GridPos, (With<Player>, Without<Creature>)>,
     )
 {
 if timer. 0.tick(time.delta()).just_finished() {
-    println!("Blup: Creature ATTACk");
+    println!("Blup: Creature ATTACK");
     enum UpDown {
     Up,
     Down,
