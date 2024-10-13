@@ -11,6 +11,8 @@
 - create graphical timer bar
 - optimise systems to only run when needed
 - create new creature with A* algorithm
+- flesh out design doc
+- flesh out readme
 
 
 ## Completed
