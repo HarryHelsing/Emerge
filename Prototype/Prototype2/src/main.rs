@@ -144,6 +144,8 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>, mut textures: R
     commands.spawn((
             Player,
             ObstaclePos { xgrid: 0.0, ygrid: 0.0 },
+        Health { health: 120, max_health: 120},
+        Alive { remove: false },
             OnMap,
             PlayerAttackDirection {direction: Direction::None},
         GridPos { xgrid: 0.0, ygrid: 0.0 },
