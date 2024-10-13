@@ -13,6 +13,7 @@
 - create new creature with A* algorithm
 - flesh out design doc
 - flesh out readme
+- make prototype 3: more modules, optimisation, code clarity
 
 
 ## Completed
