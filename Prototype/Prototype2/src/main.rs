@@ -581,7 +581,58 @@ temp_y = GridPos.ygrid;
         if blocked {
             UpdateGridPos.xgrid = GridPos.xgrid;
             UpdateGridPos.ygrid = GridPos.ygrid;
+            //Try again on X axis
+
+                blocked = false;
+        match creature_leftright {
+    LeftRight::None => {}
+    LeftRight::Right => {UpdateGridPos.xgrid = UpdateGridPos.xgrid - 1.0}
+    LeftRight::Left => {UpdateGridPos.xgrid = UpdateGridPos.xgrid + 1.0}
         }
+
+        new_x = UpdateGridPos.xgrid;
+        new_y = UpdateGridPos.ygrid;
+            for ObstaclePos in &obstacle_query {
+            if  new_x == ObstaclePos.xgrid && new_y ==  ObstaclePos.ygrid {
+                blocked = true;
+                break;
+        }
+    }
+
+        // If blocked, update the position to previous position
+        if blocked {
+            UpdateGridPos.xgrid = GridPos.xgrid;
+            UpdateGridPos.ygrid = GridPos.ygrid;
+            //Try again on Y axis
+
+                blocked = false;
+         match creature_updown {
+    UpDown::None => println!("Brep: Creature didn't move up/down"),
+    UpDown::Up => {UpdateGridPos.ygrid = UpdateGridPos.ygrid - 1.0}
+    UpDown::Down => {UpdateGridPos.ygrid = UpdateGridPos.ygrid + 1.0}
+       }
+
+        new_x = UpdateGridPos.xgrid;
+        new_y = UpdateGridPos.ygrid;
+            for ObstaclePos in &obstacle_query {
+            if  new_x == ObstaclePos.xgrid && new_y ==  ObstaclePos.ygrid {
+                blocked = true;
+                break;
+        }
+    }
+
+        // If blocked, update the position to previous position
+        if blocked {
+            UpdateGridPos.xgrid = GridPos.xgrid;
+            UpdateGridPos.ygrid = GridPos.ygrid;
+            //Failed to move
+            println!("Bulp: Fire Critter failed to move!")
+        }
+
+        }
+
+        }
+
          creature_updown = UpDown::None;
          creature_leftright = LeftRight::None;
         //use local enum for up, down, none, and left, right, none, then use match statement to
