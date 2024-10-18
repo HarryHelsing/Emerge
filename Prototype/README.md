@@ -7,7 +7,7 @@ Mostly just a chance to try out Bevy, try out coding some of the basics to test 
 ### Gameplay demo
 A chance to test out gameplay mechanics in a rough form.
 
-- *not done* Create Rhythm Movement system(redesign has happened, rhythm mechanics have been replaces with short timer design)
+- *not done* Create Global Movement Mechanic
 - *done* Create Player Character
 - *done* Create Enemies
 - *done* Create Obstacles
@@ -19,7 +19,7 @@ A chance to test out gameplay mechanics in a rough form.
 - *done* Refine and tweek controls
 
 **Notes**
-It's probably important to finish this demo and test the global time mechanic before moving on. That being said don't both fleshing it out beyond that.
+It's probably important to finish this demo and test the global time mechanic before moving on. That being said don't bother fleshing it out beyond that.
 
 
 ## Prototype 3
