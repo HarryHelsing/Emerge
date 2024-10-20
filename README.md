@@ -1,4 +1,4 @@
-# Emerge
+# Gahara
 Grid based, pixel art, realtime-turnbased-ish, game where you play as a blob in the wild.
 Written is Rust, using the Bevy game engine.
 
