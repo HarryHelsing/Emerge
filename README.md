@@ -1,5 +1,5 @@
 # Gahara
-Grid based, pixel art, realtime-turnbased-ish, game where you play as a blob in the wild.
+Grid based, (was pixel art, switching to hand drawn), realtime-turnbased-ish, game where you play as a (blob - old version) in the wild.
 Written is Rust, using the Bevy game engine.
 
 Plans for the near future include:
