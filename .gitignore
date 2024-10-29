@@ -1,5 +1,7 @@
 # Ignore the target directory, where Cargo builds your project
 /Prototype/Prototype2/target/
+/Prototype/Prototype3/target/
+/Prototype/Prototype3/assets/
 
 # Ignore compiled object files, dependency files, and binaries
 *.o

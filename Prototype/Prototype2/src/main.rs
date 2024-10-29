@@ -2,8 +2,8 @@ use bevy::prelude::*;
 use bevy::window::PrimaryWindow;
 use bevy::render::camera::ScalingMode;
 use bevy::window::WindowResized;
-use tiles::*;
 use rand::Rng;
+use tiles::*;
 mod tiles;
 
 const GRID_WIDTH: usize = 32;
