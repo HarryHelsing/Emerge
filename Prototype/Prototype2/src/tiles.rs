@@ -1,4 +1,4 @@
-use bevy::prelude::*;
+se bevy::prelude::*;
 
 const CELL_SIZE: f32 = 10.0; // Each cell is 8x8 pixels
 

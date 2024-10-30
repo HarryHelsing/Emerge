@@ -6,7 +6,7 @@ use bevy::window::WindowResized;
 use rand::Rng;
 
 mod tiles_plugin;
-use tiles_plugin::TilesPlugin;
+use tiles_plugin::*;
   
 const GRID_WIDTH: f32 = 20.0;
 const GRID_HEIGHT: f32 = 10.0;
@@ -28,11 +28,12 @@ fn main() {
         )
         .add_systems(Startup, setup)
         .add_systems(Update, resize_camera)//done
-        .add_plugins(TilesPlugin)
+        .add_plugins(tiles_plugin::TilesPlugin)
         .run();
 }
 
-fn setup(mut commands: Commands) {
+fn setup(mut commands: Commands, mut update_tiles_writer: EventWriter<UpdateTilesEvent>,) {
+    update_tiles_writer.send(UpdateTilesEvent);
     commands.spawn(Camera2dBundle::default());
 }
 
