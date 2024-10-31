@@ -3,16 +3,13 @@ use bevy::window::PrimaryWindow;
 use bevy::render::camera::ScalingMode;
 use bevy::window::WindowResized;
 
-use rand::Rng;
 
 mod tiles_plugin;
 use tiles_plugin::*;
   
-const GRID_WIDTH: f32 = 20.0;
-const GRID_HEIGHT: f32 = 10.0;
+
 const SCREEN_WIDTH: f32 = 1920.0;
 const SCREEN_HEIGHT: f32 = 1080.0;
-const CELL_SIZE: f32 = 96.0;
     
 fn main() {
     App::new()
