@@ -1,10 +1,11 @@
 use bevy::prelude::*;
-use bevy::render::texture::ImageSampler;
 
 use rand::Rng;
 
 pub struct TilesPlugin;
 
+#[derive(Component)]
+struct IsTile;
 
 #[derive(Event)]
 pub struct UpdateTilesEvent;
@@ -21,6 +22,7 @@ impl Plugin for TilesPlugin {
 }
 
 fn update_tiles(
+    query: Query<Entity, With<IsTile>>,
     mut update_tiles_reader: EventReader<UpdateTilesEvent>,
     asset_server: Res<AssetServer>,
     mut commands: Commands,
@@ -30,6 +32,9 @@ fn update_tiles(
 for _event in update_tiles_reader.read() {
 println!("The event worked!");
 
+for entity in query.iter() {
+commands.entity(entity).despawn();
+}
     let layout = TextureAtlasLayout::from_grid(UVec2::splat(128), 4, 4, None, None);
     let atlas_image: Handle<Image> = asset_server.load("tiles/dune_atlas.png");
     let atlas_layout = texture_atlas_layouts.add(layout);
@@ -59,7 +64,7 @@ println!("The event worked!");
 }
 }
 
-pub fn spawn_tile(commands: &mut Commands, image_handle: Handle<Image>, layout_handle: Handle<TextureAtlasLayout>, x: usize, y: usize, index: usize) {
+fn spawn_tile(commands: &mut Commands, image_handle: Handle<Image>, layout_handle: Handle<TextureAtlasLayout>, x: usize, y: usize, index: usize) {
     let position = Vec3::new(
         x as f32 * CELL_SIZE - 896.0,
         y as f32 * CELL_SIZE - 540.0,
@@ -80,35 +85,9 @@ pub fn spawn_tile(commands: &mut Commands, image_handle: Handle<Image>, layout_h
             layout: layout_handle,
            index: index,
         },
+        IsTile,
     ));
 }
 
 
-
-fn make_atlas (
-    mut update_tiles_reader: EventReader<UpdateTilesEvent>,
-    mut commands: Commands,
-    asset_server: Res<AssetServer>,
-    mut texture_atlas_layouts: ResMut<Assets<TextureAtlasLayout>>,
-) {
-    // Load the texture and create the texture atlas layout
-    let texture = asset_server.load("tiles/dune_atlas.png");
-    let layout = TextureAtlasLayout::from_grid(UVec2::splat(128), 4, 4, None, None);
-    let texture_atlas_layout = texture_atlas_layouts.add(layout);
-
-    // Set the desired sprite index (e.g., first frame in the atlas)
-    let selected_sprite_index = 0;
-
-    commands.spawn((
-        SpriteBundle {
-            transform: Transform::from_scale(Vec3::splat(1.0)),
-            texture,
-            ..default()
-        },
-        TextureAtlas {
-            layout: texture_atlas_layout,
-            index: selected_sprite_index,
-        },
-    ));
-}
 

@@ -6,10 +6,6 @@ use bevy::window::WindowResized;
 
 mod tiles_plugin;
 use tiles_plugin::*;
-  
-
-const SCREEN_WIDTH: f32 = 1920.0;
-const SCREEN_HEIGHT: f32 = 1080.0;
     
 fn main() {
     App::new()
@@ -37,7 +33,7 @@ fn setup(mut commands: Commands, mut update_tiles_writer: EventWriter<UpdateTile
 fn resize_camera(
     mut query: Query<&mut OrthographicProjection, With<Camera2d>>,
     windows: Query<&Window, With<PrimaryWindow>>,
-    mut resize_events: EventReader<WindowResized>,
+    resize_events: EventReader<WindowResized>,
 ) {
     if !resize_events.is_empty() {
     let mut projection = query.single_mut();
