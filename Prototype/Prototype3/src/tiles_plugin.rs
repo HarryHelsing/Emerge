@@ -11,9 +11,14 @@ struct IsTile;
 pub struct UpdateTilesEvent;
 
 const GRID_WIDTH: usize = 15;
-const GRID_HEIGHT: usize = 10;
-const CELL_SIZE: f32 = 128.0;
-
+const GRID_HEIGHT: usize = 9;//This stuff will be outdated when fluid movement/world chunks is introduced
+const CELL_SIZE: f32 = 128.0;//-side note: with chunks should decoration be a child of chunk? look into it
+/*Code is getting a tad messy. Could do with being more modular.
+ *Too many magic numbers and hard coded things.
+ *Perhaps soon is a good time to learn json,
+ *or similar format like ron. Perhaps even just learn
+ *an sql database. Why not?
+ */
 impl Plugin for TilesPlugin {
     fn build(&self, app: &mut App) {
         app.add_event::<UpdateTilesEvent>();
@@ -140,6 +145,7 @@ commands.entity(entity).despawn();
 }
 }
 
+//Add fn or option for animated thing
 fn spawn_decoration(commands: &mut Commands, image_handle: Handle<Image>, layout_handle: Handle<TextureAtlasLayout>, x: usize, y: usize, index: usize) {
 
     let mut rng = rand::thread_rng();
