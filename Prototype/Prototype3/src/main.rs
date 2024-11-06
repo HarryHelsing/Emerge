@@ -4,8 +4,13 @@ use bevy::render::camera::ScalingMode;
 use bevy::window::WindowResized;
 
 
+//add new plugins when ready
 mod tiles_plugin;
 use tiles_plugin::*;
+mod turn_plugin;
+use turn_plugin::*;
+mod animate_plugin;
+use animate_plugin::*;
     
 fn main() {
     App::new()
@@ -22,10 +27,14 @@ fn main() {
         .add_systems(Startup, setup)
         .add_systems(Update, resize_camera)//done
         .add_plugins(tiles_plugin::TilesPlugin)
-        .run();
+        .add_plugins(turn_plugin::TurnPlugin)
+        .add_plugins(animate_plugin::AnimatePlugin)
+        .run();//add new plugins when ready
 }
 
-fn setup(mut commands: Commands, mut update_tiles_writer: EventWriter<UpdateTilesEvent>,) {
+fn setup(
+    mut commands: Commands, mut update_tiles_writer: EventWriter<UpdateTilesEvent>,
+    ) {
     update_tiles_writer.send(UpdateTilesEvent);
     commands.spawn(Camera2dBundle::default());
 }
