@@ -1,4 +1,6 @@
 use bevy::prelude::*;
+use crate::animate_plugin::AnimateOpenClose;
+use crate::animate_plugin::OpenCloseStates;
 
 use rand::Rng;
 
@@ -111,7 +113,7 @@ println!("The event worked!");
 for entity in query.iter() {
 commands.entity(entity).despawn();
 }
-    let layout = TextureAtlasLayout::from_grid(UVec2::splat(64), 4, 4, None, None);
+    let layout = TextureAtlasLayout::from_grid(UVec2::splat(64), 5, 5, None, None);
     let atlas_image: Handle<Image> = asset_server.load("tile_decoration/dune_decoration.png");
     let atlas_layout = texture_atlas_layouts.add(layout);
     let mut rng = rand::thread_rng();
@@ -120,7 +122,7 @@ commands.entity(entity).despawn();
 
     for y in 0..GRID_HEIGHT {
         for x in 0..GRID_WIDTH {            
-            grid[y][x] = rng.gen_range(1..=20); }} 
+            grid[y][x] = rng.gen_range(1..=30); }} 
 
     // Spawn the sprites based on the grid
     for y in 0..GRID_HEIGHT {
@@ -136,7 +138,10 @@ commands.entity(entity).despawn();
                 8 => spawn_decoration(&mut commands, atlas_image.clone(), atlas_layout.clone(), x, y, 7),       
                 9 => spawn_decoration(&mut commands, atlas_image.clone(), atlas_layout.clone(), x, y, 8),       
                 10 => spawn_decoration(&mut commands, atlas_image.clone(), atlas_layout.clone(), x, y, 9),       
-                11 => spawn_decoration(&mut commands, atlas_image.clone(), atlas_layout.clone(), x, y, 10),       
+                11 => spawn_animated_decoration(&mut commands, atlas_image.clone(), atlas_layout.clone(), x, y, 12, 1, false, true, false, OpenCloseStates::Closed, 12, 12, false),       
+                12 => spawn_animated_decoration(&mut commands, atlas_image.clone(), atlas_layout.clone(), x, y, 15, 1, false, true, false, OpenCloseStates::Open, 15, 15, false),       
+                13 => spawn_animated_decoration(&mut commands, atlas_image.clone(), atlas_layout.clone(), x, y, 16, 2, false, false, false, OpenCloseStates::Closed, 16, 16, false),       
+                14 => spawn_animated_decoration(&mut commands, atlas_image.clone(), atlas_layout.clone(), x, y, 20, 2, false, true, false, OpenCloseStates::Open, 20, 20, false),       
                 _ => {}
             }
         }
@@ -145,7 +150,8 @@ commands.entity(entity).despawn();
 }
 }
 
-//Add fn or option for animated thing
+//Add fn or option for animated thing, creates animated component, remember to import crate from
+//animate_plugin
 fn spawn_decoration(commands: &mut Commands, image_handle: Handle<Image>, layout_handle: Handle<TextureAtlasLayout>, x: usize, y: usize, index: usize) {
 
     let mut rng = rand::thread_rng();
@@ -181,3 +187,63 @@ fn spawn_decoration(commands: &mut Commands, image_handle: Handle<Image>, layout
     ));
 }
 
+fn spawn_animated_decoration(
+    commands: &mut Commands,
+    image_handle: Handle<Image>,
+    layout_handle: Handle<TextureAtlasLayout>,
+    x: usize,
+    y: usize,
+    index: usize,
+    animation_type: usize,
+    animate: bool,
+    reverse_animate: bool,
+    loop_animation: bool,
+    animation_states:OpenCloseStates,
+    first_frame: usize,
+    last_frame: usize,
+    just_changed_state: bool,
+    ) {
+
+    let mut rng = rand::thread_rng();
+            let location_top = rng.gen_bool(0.5); 
+            let location_right = rng.gen_bool(0.5); 
+            let mut off_centre_x = -32.0;
+            let mut off_centre_y = -32.0;
+            if location_top {off_centre_y = 32.0};
+            if location_right {off_centre_x = 32.0};
+            let mut depth = 10.0;
+            if location_top {depth = 5.0};
+    let position = Vec3::new(
+        x as f32 * CELL_SIZE - 896.0 + off_centre_x,
+        y as f32 * CELL_SIZE - 540.0 + off_centre_y,
+        depth,
+    );
+
+    commands.spawn((
+            SpriteBundle {
+        texture: image_handle,
+        transform: Transform {
+            translation: position,
+            scale: Vec3::splat(1.0),
+            ..Default::default()
+        },
+        ..Default::default()
+    },
+        TextureAtlas {
+            layout: layout_handle,
+           index: index,
+        },
+        IsTile,
+        AnimateOpenClose {
+    animation_type: animation_type,
+    animate: animate,
+    reverse_animate: reverse_animate,
+    loop_animation: loop_animation,
+    animation_states:animation_states,
+    animation_index: index,
+    first_frame: first_frame,
+    last_frame: last_frame,
+    just_changed_state: just_changed_state,
+        },
+    ));
+}
