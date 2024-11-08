@@ -1,41 +1,76 @@
 use bevy::prelude::*;
 use crate::turn_plugin::GlobalMoveEvent;
+use crate::turn_plugin::GlobalAnimateEvent;//merge into 1 crate
 use rand::Rng;
 
 /*ToDo
- * Make animation event
  * fn to update atlas index based upon state info then trigger event if needed
- * add a resource with a hash map to store structs containing relevant data
+ * have fn read from resource, stepping through vec to find animation data
  */
 
 pub struct AnimatePlugin;
 
-//define animation state enum
-//make component for all animation info
 #[derive(PartialEq)]
 pub enum OpenCloseStates {
 Open ,Closing, Closed, Opening,
 }
 
+struct FrameData {
+first_frame: usize,
+last_frame: usize,
+}
+
+struct AnimationType {
+animation_type: usize,//two nested fields names animation type! fix it
+states: [FrameData; 4],
+}
+
+#[derive(Resource)]
+struct FourStateAnimation {
+animation_type: Vec<AnimationType>,
+}
+
 #[derive(Component)]
 pub struct AnimateOpenClose {
     pub animation_type: usize,
-    pub animate: bool,
+    pub no_movement: bool,
     pub reverse_animate: bool,//check last frame is smaller than first, set to true
     pub loop_animation: bool,
     pub animation_states:OpenCloseStates,//consider seperating this into
     pub animation_index: usize,          //its own component to keep it
     pub first_frame: usize,              //modular. Then creating a bundle?
     pub last_frame: usize,               //maybe include just_changed_state
-    pub just_changed_state: bool,
+    pub just_changed_state: bool,        //would work since not all need a state
 }
 
 
 
 impl Plugin for AnimatePlugin {
     fn build(&self, app: &mut App) {
-//        app.add_event::<>();
         app.add_systems(Update, animation_state_changer);
+        app.add_systems(Update, animation_parser);
+        app.insert_resource(FourStateAnimation {
+            animation_type: vec![
+                AnimationType {
+                animation_type: 1,
+                states: [
+                    FrameData {first_frame: 15, last_frame: 15},
+                    FrameData {first_frame: 14, last_frame: 13},
+                    FrameData {first_frame: 12, last_frame: 12},
+                    FrameData {first_frame: 11, last_frame: 10},
+                ]},
+                AnimationType {
+                animation_type: 2,
+                states: [
+                    FrameData {first_frame: 20, last_frame: 20},
+                    FrameData {first_frame: 19, last_frame: 17},
+                    FrameData {first_frame: 16, last_frame: 16},
+                    FrameData {first_frame: 17, last_frame: 19},
+                ]},
+
+            ],
+
+        });
     }
 }
 
@@ -53,9 +88,11 @@ for mut AnimateOpenClose in decor_query.iter_mut() {
             let decor_move = rng.gen_bool(0.5); 
             if decor_move {
             match AnimateOpenClose.animation_states {
-    OpenCloseStates::Open => { AnimateOpenClose.animation_states = OpenCloseStates::Closing; AnimateOpenClose.just_changed_state = true}
+    OpenCloseStates::Open =>
+    { AnimateOpenClose.animation_states = OpenCloseStates::Closing; AnimateOpenClose.just_changed_state = true}
     OpenCloseStates::Closing => {}
-    OpenCloseStates::Closed => { AnimateOpenClose.animation_states = OpenCloseStates::Opening; AnimateOpenClose.just_changed_state = true }
+    OpenCloseStates::Closed =>
+    { AnimateOpenClose.animation_states = OpenCloseStates::Opening; AnimateOpenClose.just_changed_state = true }
     OpenCloseStates::Opening => {}
             }
             }
@@ -64,9 +101,76 @@ for mut AnimateOpenClose in decor_query.iter_mut() {
 }
 
 fn animation_parser(
-//query animation components, resource stuff for changing sprites,
-//resource for animation frame details
+    mut global_animate_reader: EventReader<GlobalAnimateEvent>,
+    mut query_animation: Query<(&mut TextureAtlas, &mut AnimateOpenClose)>,
+    animation_data: Res<FourStateAnimation>,
     ) {
+    
+for _event in global_animate_reader.read() {
+for (mut TextureAtlas, mut AnimateOpenClose) in query_animation.iter_mut() {
+let mut keep_going = true;
 
+//Update entity after state change
+if AnimateOpenClose.just_changed_state {
+keep_going = false;
+AnimateOpenClose.just_changed_state = false;
+
+let animation_vec = animation_data.animation_type;
+let target = AnimateOpenClose.animation_type;
+for (animation_type, states) in animation_vec.iter().enumerate()
+{
+    if animation_type == target {
+        match AnimateOpenClose.animation_states {
+    OpenCloseStates::Open => {
+        AnimateOpenClose.first_frame = states[0].first_frame;
+        AnimateOpenClose.last_frame = animation_data.states[0].last_frame;
+    }
+    OpenCloseStates::Closing => {
+        AnimateOpenClose.first_frame = animation_data.states[1].first_frame;
+        AnimateOpenClose.last_frame = animation_data.states[1].last_frame;
+    }
+    OpenCloseStates::Closed => {
+        AnimateOpenClose.first_frame = animation_data.states[2].first_frame;
+        AnimateOpenClose.last_frame = animation_data.states[2].last_frame;
+    }
+    OpenCloseStates::Opening => {
+        AnimateOpenClose.first_frame = animation_data.states[3].first_frame;
+        AnimateOpenClose.last_frame = animation_data.states[3].last_frame;
+    }
+        }
+    }
+
+}
+//create match statement with enum to define which FrameData
+//access animation type to get correct struct from vec
+//access resource, set fields: first_frame, last_frame
+//then apply logic based off of frames to define animateOC fields
+
+AnimateOpenClose.no_movement = false;//temporary, delete later
+    }
+
+//Iterate through animation
+if AnimateOpenClose.no_movement { keep_going = false }
+if keep_going {
+if AnimateOpenClose.reverse_animate {
+TextureAtlas.index = TextureAtlas.index -1;
+        } else {
+TextureAtlas.index = TextureAtlas.index +1;
+        }
+
+if TextureAtlas.index == AnimateOpenClose.last_frame {
+match AnimateOpenClose.animation_states {
+    OpenCloseStates::Open => {}
+    OpenCloseStates::Closing =>
+{ AnimateOpenClose.animation_states = OpenCloseStates::Closed; AnimateOpenClose.just_changed_state = true}
+    OpenCloseStates::Closed => {}
+    OpenCloseStates::Opening =>
+    { AnimateOpenClose.animation_states = OpenCloseStates::Open; AnimateOpenClose.just_changed_state = true }
+
+            }
+        }
+    }
+        }
+    }
 }
 //Create iterative animator that sends animation event to change state when at the end of cycle

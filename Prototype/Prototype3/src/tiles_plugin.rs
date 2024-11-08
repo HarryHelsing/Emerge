@@ -138,10 +138,10 @@ commands.entity(entity).despawn();
                 8 => spawn_decoration(&mut commands, atlas_image.clone(), atlas_layout.clone(), x, y, 7),       
                 9 => spawn_decoration(&mut commands, atlas_image.clone(), atlas_layout.clone(), x, y, 8),       
                 10 => spawn_decoration(&mut commands, atlas_image.clone(), atlas_layout.clone(), x, y, 9),       
-                11 => spawn_animated_decoration(&mut commands, atlas_image.clone(), atlas_layout.clone(), x, y, 12, 1, false, true, false, OpenCloseStates::Closed, 12, 12, false),       
-                12 => spawn_animated_decoration(&mut commands, atlas_image.clone(), atlas_layout.clone(), x, y, 15, 1, false, true, false, OpenCloseStates::Open, 15, 15, false),       
-                13 => spawn_animated_decoration(&mut commands, atlas_image.clone(), atlas_layout.clone(), x, y, 16, 2, false, false, false, OpenCloseStates::Closed, 16, 16, false),       
-                14 => spawn_animated_decoration(&mut commands, atlas_image.clone(), atlas_layout.clone(), x, y, 20, 2, false, true, false, OpenCloseStates::Open, 20, 20, false),       
+                11 => spawn_animated_decoration(&mut commands, atlas_image.clone(), atlas_layout.clone(), x, y, 12, 1, true, true, false, OpenCloseStates::Closed, 12, 12, false),       
+                12 => spawn_animated_decoration(&mut commands, atlas_image.clone(), atlas_layout.clone(), x, y, 15, 1, true, true, false, OpenCloseStates::Open, 15, 15, false),       
+                13 => spawn_animated_decoration(&mut commands, atlas_image.clone(), atlas_layout.clone(), x, y, 16, 2, true, false, false, OpenCloseStates::Closed, 16, 16, false),       
+                14 => spawn_animated_decoration(&mut commands, atlas_image.clone(), atlas_layout.clone(), x, y, 20, 2, true, true, false, OpenCloseStates::Open, 20, 20, false),       
                 _ => {}
             }
         }
@@ -195,7 +195,7 @@ fn spawn_animated_decoration(
     y: usize,
     index: usize,
     animation_type: usize,
-    animate: bool,
+    no_movement: bool,
     reverse_animate: bool,
     loop_animation: bool,
     animation_states:OpenCloseStates,
@@ -236,7 +236,7 @@ fn spawn_animated_decoration(
         IsTile,
         AnimateOpenClose {
     animation_type: animation_type,
-    animate: animate,
+    no_movement: no_movement,
     reverse_animate: reverse_animate,
     loop_animation: loop_animation,
     animation_states:animation_states,
