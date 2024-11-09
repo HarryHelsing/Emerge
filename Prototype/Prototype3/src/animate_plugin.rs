@@ -1,5 +1,6 @@
 use bevy::prelude::*;
 use crate::turn_plugin::GlobalMoveEvent;
+use crate::turn_plugin::GlobalSecondEvent;
 use crate::turn_plugin::GlobalAnimateEvent;//merge into 1 crate
 use rand::Rng;
 
@@ -69,18 +70,15 @@ impl Plugin for AnimatePlugin {
     }
 }
 
-//fn for updating animation frame
-//fn for updating state and relevant data on animation component
-//(I sense magic numbers coming)-we will fix this with resources
 fn animation_state_changer(
-    mut global_move_reader: EventReader<GlobalMoveEvent>,
+    mut global_second_reader: EventReader<GlobalSecondEvent>,
     mut decor_query: Query<&mut AnimateOpenClose>,
     ) {
-for _event in global_move_reader.read() {
+for _event in global_second_reader.read() {
 println!("Global time is working inside the animate plugin, hell yeah");
 for mut AnimateOpenClose in decor_query.iter_mut() {
     let mut rng = rand::thread_rng();
-            let decor_move = rng.gen_bool(0.5); 
+            let decor_move = rng.gen_bool(0.1); 
             if decor_move {
             match AnimateOpenClose.animation_states {
     OpenCloseStates::Open =>
