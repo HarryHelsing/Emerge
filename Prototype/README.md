@@ -18,10 +18,6 @@ A chance to test out gameplay mechanics in a rough form.
 - *done* Create death logic
 - *done* Refine and tweek controls
 
-**Notes**
-It's probably important to finish this demo and test the global time mechanic before moving on. That being said don't bother fleshing it out beyond that.
-
-
 ## Prototype 3
 ### Polish Demo
 This prototype is going to be an attempt to polish a very small section of the game.
