@@ -24,10 +24,10 @@ This prototype is going to be an attempt to polish a very small section of the g
 By doing so I hope to understand deeper the direction of the game and learn what sort of changes may be needed to take it in the desired direction.
 
 ### ToDo for Prototype
-- Grid done in 1 draw call *done*
-- Beautiful grid textures *done*
-- 1080p resolution *done*
-- Code separated into modules *done*
+- *done* Grid done in 1 draw call
+- *done* Beautiful grid textures
+- *done* 1080p resolution
+- *done* Code separated into modules
 - Ron file interpretation for level design?
 - Sounds for all relevant actions
 - Music track
@@ -35,9 +35,9 @@ By doing so I hope to understand deeper the direction of the game and learn what
 - Destructible objects
 - Fully animated player character and creatures
 - Time movement function
-- Melee attack
-- Range attack
-- Agility ability
+- Create attack for player and creatures
+- Create agility ability for player
+- Implement movement logic for player and creatures
 
 **Maybe**
 - Loading screen
