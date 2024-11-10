@@ -28,13 +28,13 @@ This prototype is going to be an attempt to polish a very small section of the g
 By doing so I hope to understand deeper the direction of the game and learn what sort of changes may be needed to take it in the desired direction.
 
 ### ToDo for Prototype
-- Grid done in 1 draw call
-- Grid having varying brightness per cell through rendering pipeline (include val in json file)
+- Grid done in 1 draw call *done*
+- Grid having varying brightness per cell through rendering pipeline (include val in json file) ~
 - Grid squares rotated for variation ~
-- Beautiful grid textures
-- 1080p resolution
-- Json file interpretation for level design?
-- Json file map editor? Maybe
+- Beautiful grid textures *done*
+- 1080p resolution *done*
+- Ron file interpretation for level design?
+- Ron file map editor? Maybe
 - Sounds for all relevant actions
 - Music track
 - Three creatures that interact
@@ -42,7 +42,7 @@ By doing so I hope to understand deeper the direction of the game and learn what
 - Start Menu ~
 - Restart option ~
 - Fully animated player character and creatures
-- Code separated into modules
+- Code separated into modules *done*
 - Time movement function
 - Loading screen ~
 - Melee attack
