@@ -1,5 +1,7 @@
 use bevy::prelude::*;
 use crate::tiles_plugin::UpdateTilesEvent;
+use crate::grid_logic_plugin::{Direction, OnGrid, DirectionFacing, Location, ObstacleLocation};
+use crate::player_plugin::Player;
 
 pub struct InputPlugin;
 
@@ -16,36 +18,38 @@ const CELL_SIZE: f32 = 128.0;
 
 fn keyboard_input(
     keys: Res<ButtonInput<KeyCode>>,
-//    mut query: Query<(&GridPos, &mut UpdateGridPos, &mut InputDirection), With<Player>>,
-//    obstacle_query: Query<&ObstaclePos>,
+    mut query: Query<(&mut Location, &mut DirectionFacing), With<Player>>,
+    obstacle_query: Query<&ObstacleLocation>,
 ) {
+    println!("Bug test 1");
     if keys.get_pressed().next().is_some() {
+    println!("Bug test 2");
         //All this logic is based upon old movement logic
-        //create a player direction component,
         //ability logic works off of which way you are facing
         //-first look for keyboard inputs,
         //change direction based upon this
         //-then within the same fn, check for button presses
         //-keep in mind tweaking for technical difficulties
         //such as multiple inputs
-        let mut blocked = false;
-        let mut new_x = 0.0;
-        let mut new_y = 0.0;
-    for (GridPos, mut UpdateGridPos, mut PlayerAttackDirection) in &mut query {
-        UpdateGridPos.xgrid = GridPos.xgrid;
-        UpdateGridPos.ygrid = GridPos.ygrid;
+    for (mut location, mut direction_facing) in &mut query {
 
-            PlayerAttackDirection.direction = Direction::None;
-        if keys.pressed(KeyCode::KeyZ) {
-            if keys.just_pressed(KeyCode::ArrowUp) {PlayerAttackDirection.direction = Direction::North}
-            else if keys.just_pressed(KeyCode::ArrowDown) {PlayerAttackDirection.direction = Direction::South}
-            else if keys.just_pressed(KeyCode::ArrowLeft) {PlayerAttackDirection.direction = Direction::West}
-            else if keys.just_pressed(KeyCode::ArrowRight) {PlayerAttackDirection.direction = Direction::East}
+    println!("Bug test 3");
+            if keys.just_pressed(KeyCode::KeyW) {direction_facing.facing = Direction::North}
+            else if keys.just_pressed(KeyCode::KeyS) {direction_facing.facing = Direction::South}
+            else if keys.just_pressed(KeyCode::KeyA) {direction_facing.facing = Direction::West}
+            else if keys.just_pressed(KeyCode::KeyD) {direction_facing.facing = Direction::East}
 
-        }//swap these code blocks,
-         //also check for multiple inputs
-         //check order:
-         //direction and, move, or attack(swap leap&attack?), or leap, or summon?
+
+    if keys.just_pressed(KeyCode::KeyJ) {println!("Move")}//move in facing direction, use logic.
+        else if keys.just_pressed(KeyCode::KeyK) {println!("Attack")}
+        else if keys.just_pressed(KeyCode::KeyL) {println!("Leap")}
+        else if keys.just_pressed(KeyCode::Semicolon) {println!("Summon")}
+            //logic for J: move, K: attack, L: leap, ;: summon
+            //even if just using println! to show it's working
+        }
+    }
+}
+/*     
         else
             if keys.just_pressed(KeyCode::ArrowUp) {
                if UpdateGridPos.ygrid < F_GRID_HEIGHT - 1.0 {UpdateGridPos.ygrid += 1.0;}
@@ -61,7 +65,9 @@ fn keyboard_input(
             for ObstaclePos in &obstacle_query {
             if  new_x == ObstaclePos.xgrid && new_y ==  ObstaclePos.ygrid {
                 blocked = true;
-                break;
-        }
-    }
+        let mut blocked = false;
+        let mut new_x = 0.0;
+        let mut new_y = 0.0;
 
+        if keys.pressed(KeyCode::KeyZ) {
+                break;*/

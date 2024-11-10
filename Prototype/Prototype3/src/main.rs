@@ -13,6 +13,8 @@ mod animate_plugin;
 use animate_plugin::*;
 mod player_plugin;
 use player_plugin::*;
+mod input_plugin;
+use input_plugin::*;
 mod grid_logic_plugin;
 use grid_logic_plugin::*;
     
@@ -32,6 +34,7 @@ fn main() {
         .add_systems(Update, resize_camera)//done
         .add_plugins(tiles_plugin::TilesPlugin)
         .add_plugins(turn_plugin::TurnPlugin)
+        .add_plugins(input_plugin::InputPlugin)
         .add_plugins(player_plugin::PlayerPlugin)
         .add_plugins(animate_plugin::AnimatePlugin)
         .add_plugins(grid_logic_plugin::GridLogicPlugin)

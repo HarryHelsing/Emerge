@@ -75,7 +75,3 @@ fn snap_to_grid(mut query: Query<(&Location, &mut Transform), With<OnGrid>>) {
         transform.translation.y = new_y;
     };
 }
-
-//snap to grid fn
-//
-
