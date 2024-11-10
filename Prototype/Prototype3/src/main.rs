@@ -11,6 +11,8 @@ mod turn_plugin;
 use turn_plugin::*;
 mod animate_plugin;
 use animate_plugin::*;
+mod player_plugin;
+use player_plugin::*;
     
 fn main() {
     App::new()
@@ -28,6 +30,7 @@ fn main() {
         .add_systems(Update, resize_camera)//done
         .add_plugins(tiles_plugin::TilesPlugin)
         .add_plugins(turn_plugin::TurnPlugin)
+        .add_plugins(player_plugin::PlayerPlugin)
         .add_plugins(animate_plugin::AnimatePlugin)
         .run();//add new plugins when ready
 }
