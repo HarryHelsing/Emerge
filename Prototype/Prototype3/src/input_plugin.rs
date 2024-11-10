@@ -40,12 +40,22 @@ fn keyboard_input(
             else if keys.just_pressed(KeyCode::KeyD) {direction_facing.facing = Direction::East}
 
 
-    if keys.just_pressed(KeyCode::KeyJ) {println!("Move")}//move in facing direction, use logic.
+        let mut new_x = location.grid_x;
+        let mut new_y = location.grid_y;
+    if keys.just_pressed(KeyCode::KeyJ) {println!("Move");
+        let mut blocked = false;
+    if direction_facing.facing == Direction::North {new_y = {new_y + 1.0}}
+    else if direction_facing.facing == Direction::South {new_y = new_y - 1.0}
+    else if direction_facing.facing == Direction::East {new_x = new_x + 1.0}
+    else if direction_facing.facing == Direction::West {new_x = new_x - 1.0}
+    }//move in facing direction, use logic.
         else if keys.just_pressed(KeyCode::KeyK) {println!("Attack")}
         else if keys.just_pressed(KeyCode::KeyL) {println!("Leap")}
         else if keys.just_pressed(KeyCode::Semicolon) {println!("Summon")}
             //logic for J: move, K: attack, L: leap, ;: summon
             //even if just using println! to show it's working
+            location.grid_x = new_x;
+            location.grid_y = new_y;
         }
     }
 }
@@ -69,5 +79,6 @@ fn keyboard_input(
         let mut new_x = 0.0;
         let mut new_y = 0.0;
 
+        for ObstacleLocation in obstacle_query {
         if keys.pressed(KeyCode::KeyZ) {
                 break;*/
