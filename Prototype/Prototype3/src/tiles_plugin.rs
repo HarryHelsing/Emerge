@@ -1,24 +1,10 @@
 use bevy::prelude::*;
 use crate::animate_plugin::AnimateOpenClose;
 use crate::animate_plugin::OpenCloseStates;
-
 use rand::Rng;
 
 pub struct TilesPlugin;
 
-#[derive(Component)]
-struct IsTile;
-
-#[derive(Event)]
-pub struct UpdateTilesEvent;
-
-const GRID_WIDTH: usize = 15;
-const GRID_HEIGHT: usize = 9;//This stuff will be outdated when fluid movement/world chunks is introduced
-const CELL_SIZE: f32 = 128.0;//-side note: with chunks, should decoration be a child of chunk? look into it
-/*Code is getting a tad messy. Could do with being more modular.
- *Too many magic numbers and hard coded things.
- *learn ron.
- */
 impl Plugin for TilesPlugin {
     fn build(&self, app: &mut App) {
         app.add_event::<UpdateTilesEvent>();
@@ -26,6 +12,22 @@ impl Plugin for TilesPlugin {
         app.add_systems(Update, update_decorations);
     }
 }
+
+#[derive(Component)]
+struct IsTile;
+
+#[derive(Event)]
+pub struct UpdateTilesEvent;
+
+const SCREEN_WIDTH: f32 = 1920.0;
+const SCREEN_HEIGHT: f32 = 1080.0;
+const GRID_WIDTH: usize = 15;
+const GRID_HEIGHT: usize = 9;//This stuff will be outdated when fluid movement/world chunks is introduced
+const CELL_SIZE: f32 = 128.0;//-side note: with chunks, should decoration be a child of chunk? look into it
+/*Code is getting a tad messy. Could do with being more modular.
+ *Too many magic numbers and hard coded things.
+ *learn ron.
+ */
 
 fn update_tiles(
     query: Query<Entity, With<IsTile>>,
@@ -72,8 +74,8 @@ commands.entity(entity).despawn();
 
 fn spawn_tile(commands: &mut Commands, image_handle: Handle<Image>, layout_handle: Handle<TextureAtlasLayout>, x: usize, y: usize, index: usize) {
     let position = Vec3::new(
-        x as f32 * CELL_SIZE - 896.0,
-        y as f32 * CELL_SIZE - 540.0,
+    x as f32 * CELL_SIZE - (SCREEN_WIDTH / 2.0) + 64.0,
+    y as f32 * CELL_SIZE - (SCREEN_HEIGHT / 2.0) + 64.0,
         0.0,
     );
 

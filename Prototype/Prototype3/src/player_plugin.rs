@@ -1,11 +1,8 @@
 use bevy::prelude::*;
 use crate::tiles_plugin::UpdateTilesEvent;
+use crate::grid_logic_plugin::{GridEntityBundle, Direction, OnGrid, DirectionFacing, Location, RequestLocation, ObstacleLocation, Offset};
 
 pub struct PlayerPlugin;
-
-const GRID_WIDTH: usize = 15;
-const GRID_HEIGHT: usize = 9;
-const CELL_SIZE: f32 = 128.0;
 
 impl Plugin for PlayerPlugin {
     fn build(&self, app: &mut App) {
@@ -13,6 +10,10 @@ impl Plugin for PlayerPlugin {
         app.add_systems(Update, spawn_player);
     }
 }
+
+const GRID_WIDTH: usize = 15;
+const GRID_HEIGHT: usize = 9;
+const CELL_SIZE: f32 = 128.0;
 
 fn spawn_player(
 mut commands: Commands, asset_server: Res<AssetServer>, mut textures: ResMut<Assets<Image>>, 
@@ -27,6 +28,16 @@ for _event in update_tiles_reader.read() {
             transform: Transform::from_xyz(0.0, 0.0, 10.0),
             ..Default::default()        
         },
+        //put grid bundle here
+        GridEntityBundle {
+direction_facing: DirectionFacing { facing:Direction::North },
+location: Location { grid_x: 5.0, grid_y: 5.0 },
+request_location: RequestLocation { requesting: false, grid_x: 5.0, grid_y: 5.0 },
+obstacle_location: ObstacleLocation { obstacle: true, grid_x: 5.0, grid_y: 5.0 },
+offset: Offset { offset: false, off_x: 0.0, off_y: 0.0 },
+on_grid: OnGrid,
+
+        }
     ));
 
 }

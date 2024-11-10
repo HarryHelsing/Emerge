@@ -13,6 +13,8 @@ mod animate_plugin;
 use animate_plugin::*;
 mod player_plugin;
 use player_plugin::*;
+mod grid_logic_plugin;
+use grid_logic_plugin::*;
     
 fn main() {
     App::new()
@@ -32,6 +34,7 @@ fn main() {
         .add_plugins(turn_plugin::TurnPlugin)
         .add_plugins(player_plugin::PlayerPlugin)
         .add_plugins(animate_plugin::AnimatePlugin)
+        .add_plugins(grid_logic_plugin::GridLogicPlugin)
         .run();//add new plugins when ready
 }
 

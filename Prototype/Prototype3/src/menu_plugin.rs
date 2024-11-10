@@ -1,12 +1,5 @@
 use bevy::prelude::*;
 
-#[derive(Debug, Clone, Eq, PartialEq, Hash)]
-enum GameState {
-    MainMenu,
-    InGame,
-    Exiting,
-}   
-    
 pub struct MenuPlugin;
 
 impl Plugin for MenuPlugin {
@@ -14,4 +7,11 @@ impl Plugin for MenuPlugin {
     }
 }
 
+#[derive(Debug, Clone, Eq, PartialEq, Hash)]
+enum GameState {
+    MainMenu,
+    InGame,
+    Exiting,
+}   
+ 
 //on hold until further notice
