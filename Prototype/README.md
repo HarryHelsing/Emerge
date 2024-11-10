@@ -25,24 +25,24 @@ By doing so I hope to understand deeper the direction of the game and learn what
 
 ### ToDo for Prototype
 - Grid done in 1 draw call *done*
-- Grid having varying brightness per cell through rendering pipeline (include val in json file) ~
-- Grid squares rotated for variation ~
 - Beautiful grid textures *done*
 - 1080p resolution *done*
+- Code separated into modules *done*
 - Ron file interpretation for level design?
-- Ron file map editor? Maybe
 - Sounds for all relevant actions
 - Music track
 - Three creatures that interact
 - Destructible objects
-- Start Menu ~
-- Restart option ~
 - Fully animated player character and creatures
-- Code separated into modules *done*
 - Time movement function
-- Loading screen ~
 - Melee attack
 - Range attack
 - Agility ability
 
-'~' = maybe/not that important
+**Maybe**
+- Loading screen
+- Start Menu
+- Restart option
+- Ron file map editor?
+- Grid having varying brightness per cell through rendering pipeline (include val in ron file)
+- Grid squares rotated for variation
