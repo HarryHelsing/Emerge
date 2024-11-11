@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 use rand::Rng;
 use crate::tiles_plugin::SetupEvent;
-use crate::grid_logic_plugin::{Direction, OnGrid, DirectionFacing, Location, ObstacleLocation};
+use crate::grid_logic_plugin::{StaticEntityBundle, OnGrid, Location, ObstacleLocation,};
 use crate::player_plugin::Player;
 
 pub struct ObstaclePlugin;
@@ -63,7 +63,8 @@ fn spawn_object(commands: &mut Commands, image_handle1: Handle<Image>, layout_ha
     y as f32 * CELL_SIZE - (SCREEN_HEIGHT / 2.0) + 64.0,
         8.0,
     );
-
+let new_x = x as f32;
+let new_y = y as f32;
     commands.spawn((
             SpriteBundle {
         texture: image_handle1,
@@ -75,9 +76,13 @@ fn spawn_object(commands: &mut Commands, image_handle1: Handle<Image>, layout_ha
         ..Default::default()
     },
         TextureAtlas {
-            layout: layout_handle1,
+           layout: layout_handle1,
            index: index,
         },
-
+    StaticEntityBundle {
+    location: Location { grid_x: new_x, grid_y: new_y },
+    obstacle_location: ObstacleLocation { obstacle: true, grid_x: new_x, grid_y: new_y },
+    on_grid: OnGrid,
+        }
     ));
 }

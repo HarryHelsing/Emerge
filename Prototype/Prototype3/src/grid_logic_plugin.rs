@@ -66,6 +66,13 @@ pub offset: Offset,
 pub on_grid: OnGrid,
 }
 
+#[derive(Bundle)]
+pub struct StaticEntityBundle {
+pub location: Location,
+pub obstacle_location: ObstacleLocation,
+pub on_grid: OnGrid,
+}
+
 fn snap_to_grid(mut query: Query<(&Location, &mut Transform), With<OnGrid>>) {
     for (location, mut transform) in &mut query {
        let new_x = (location.grid_x * CELL_SIZE) - (SCREEN_WIDTH / 2.0) + 64.0;
