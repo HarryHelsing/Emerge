@@ -28,6 +28,7 @@ By doing so I hope to understand deeper the direction of the game and learn what
 - *done* Beautiful grid textures
 - *done* 1080p resolution
 - *done* Code separated into modules
+- *done* Create agility ability for player
 - Ron file interpretation for level design?
 - Sounds for all relevant actions
 - Music track
@@ -36,7 +37,6 @@ By doing so I hope to understand deeper the direction of the game and learn what
 - Fully animated player character and creatures
 - Time movement function
 - Create attack for player and creatures
-- Create agility ability for player
 - Implement movement logic for player and creatures
 
 **Maybe**
