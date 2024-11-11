@@ -57,24 +57,10 @@ fn keyboard_input(
            location.grid_x = new_x;
            location.grid_y = new_y;
             }
-        //{newx or newy not above or below grid then}
-
         }
     }
 }
 /*     
-        else
-            if keys.just_pressed(KeyCode::ArrowUp) {
-               if UpdateGridPos.ygrid < F_GRID_HEIGHT - 1.0 {UpdateGridPos.ygrid += 1.0;}
-            } else if keys.just_pressed(KeyCode::ArrowDown) {
-               if UpdateGridPos.ygrid > 0.0 {UpdateGridPos.ygrid -= 1.0;}
-            } else if keys.just_pressed(KeyCode::ArrowLeft) {
-               if UpdateGridPos.xgrid > 0.0 {UpdateGridPos.xgrid -= 1.0;}
-            } else if keys.just_pressed(KeyCode::ArrowRight) {
-               if UpdateGridPos.xgrid < F_GRID_WIDTH - 1.0 {UpdateGridPos.xgrid += 1.0;}
-            }
-        new_x = UpdateGridPos.xgrid;
-        new_y = UpdateGridPos.ygrid;
             for ObstaclePos in &obstacle_query {
             if  new_x == ObstaclePos.xgrid && new_y ==  ObstaclePos.ygrid {
                 blocked = true;
