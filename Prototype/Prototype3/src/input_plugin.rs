@@ -52,6 +52,11 @@ fn keyboard_input(
         else if keys.just_pressed(KeyCode::Semicolon) {println!("Summon")}
             //logic for J: move, K: attack, L: leap, ;: summon
             //even if just using println! to show it's working
+    for ObstacleLocation in &obstacle_query {
+        if  new_x == ObstacleLocation.grid_x && new_y == ObstacleLocation.grid_y {
+            blocked = true;
+            break;}}
+    if blocked {break;}
         if new_x >= 0.0 && new_x < GRID_WIDTH as f32
             && new_y >= 0.0 && new_y < GRID_HEIGHT as f32 {
            location.grid_x = new_x;
@@ -60,8 +65,3 @@ fn keyboard_input(
         }
     }
 }
- /*          for ObstaclePos in &obstacle_query {
-            if  new_x == ObstaclePos.xgrid && new_y ==  ObstaclePos.ygrid {
-                blocked = true;
-        for ObstacleLocation in obstacle_query {
-                break;*/
