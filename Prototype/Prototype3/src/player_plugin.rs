@@ -1,5 +1,5 @@
 use bevy::prelude::*;
-use crate::tiles_plugin::UpdateTilesEvent;
+use crate::tiles_plugin::SetupEvent;
 use crate::grid_logic_plugin::{GridEntityBundle, Direction, OnGrid, DirectionFacing, Location, RequestLocation, ObstacleLocation, Offset};
 
 pub struct PlayerPlugin;
@@ -20,9 +20,9 @@ pub struct Player;
 
 fn spawn_player(
 mut commands: Commands, asset_server: Res<AssetServer>, mut textures: ResMut<Assets<Image>>, 
-    mut update_tiles_reader: EventReader<UpdateTilesEvent>,
+    mut setup_reader: EventReader<SetupEvent>,
     ) {
-for _event in update_tiles_reader.read() {
+for _event in setup_reader.read() {
     let texture_handle_frog = asset_server.load("player/drowsy_frog_sprite.png");                                                                                     
 
     commands.spawn((

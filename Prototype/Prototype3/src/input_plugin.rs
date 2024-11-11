@@ -1,5 +1,5 @@
 use bevy::prelude::*;
-use crate::tiles_plugin::UpdateTilesEvent;
+use crate::tiles_plugin::SetupEvent;
 use crate::grid_logic_plugin::{Direction, OnGrid, DirectionFacing, Location, ObstacleLocation};
 use crate::player_plugin::Player;
 
@@ -60,8 +60,7 @@ fn keyboard_input(
         }
     }
 }
-/*     
-            for ObstaclePos in &obstacle_query {
+ /*          for ObstaclePos in &obstacle_query {
             if  new_x == ObstaclePos.xgrid && new_y ==  ObstaclePos.ygrid {
                 blocked = true;
         for ObstacleLocation in obstacle_query {

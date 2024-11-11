@@ -42,9 +42,9 @@ fn main() {
 }
 
 fn setup(
-    mut commands: Commands, mut update_tiles_writer: EventWriter<UpdateTilesEvent>,
+    mut commands: Commands, mut setup_writer: EventWriter<SetupEvent>,
     ) {
-    update_tiles_writer.send(UpdateTilesEvent);
+    setup_writer.send(SetupEvent);
     commands.spawn(Camera2dBundle::default());
 }
 

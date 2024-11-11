@@ -7,7 +7,7 @@ pub struct TilesPlugin;
 
 impl Plugin for TilesPlugin {
     fn build(&self, app: &mut App) {
-        app.add_event::<UpdateTilesEvent>();
+        app.add_event::<SetupEvent>();
         app.add_systems(Update, update_tiles);
         app.add_systems(Update, update_decorations);
     }
@@ -17,7 +17,7 @@ impl Plugin for TilesPlugin {
 struct IsTile;
 
 #[derive(Event)]
-pub struct UpdateTilesEvent;
+pub struct SetupEvent;
 
 const SCREEN_WIDTH: f32 = 1920.0;
 const SCREEN_HEIGHT: f32 = 1080.0;
@@ -31,13 +31,13 @@ const CELL_SIZE: f32 = 128.0;//-side note: with chunks, should decoration be a c
 
 fn update_tiles(
     query: Query<Entity, With<IsTile>>,
-    mut update_tiles_reader: EventReader<UpdateTilesEvent>,
+    mut setup_reader: EventReader<SetupEvent>,
     asset_server: Res<AssetServer>,
     mut commands: Commands,
     mut texture_atlas_layouts: ResMut<Assets<TextureAtlasLayout>>,
     ) {
 
-for _event in update_tiles_reader.read() {
+for _event in setup_reader.read() {
 println!("The event worked!");
 
 for entity in query.iter() {
@@ -101,13 +101,13 @@ fn spawn_tile(commands: &mut Commands, image_handle: Handle<Image>, layout_handl
 
 fn update_decorations(
     query: Query<Entity, With<IsTile>>,
-    mut update_tiles_reader: EventReader<UpdateTilesEvent>,
+    mut setup_reader: EventReader<SetupEvent>,
     asset_server: Res<AssetServer>,
     mut commands: Commands,
     mut texture_atlas_layouts: ResMut<Assets<TextureAtlasLayout>>,
     ) {
 
-for _event in update_tiles_reader.read() {
+for _event in setup_reader.read() {
 println!("The event worked!");
 
 for entity in query.iter() {
