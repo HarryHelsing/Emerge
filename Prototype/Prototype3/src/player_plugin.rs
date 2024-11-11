@@ -29,10 +29,9 @@ for _event in update_tiles_reader.read() {
         Player,
         SpriteBundle {
             texture: texture_handle_frog.clone(),
-            transform: Transform::from_xyz(0.0, 0.0, 10.0),
+            transform: Transform::from_xyz(0.0, 0.0, 15.0),
             ..Default::default()        
         },
-        //put grid bundle here
         GridEntityBundle {
 direction_facing: DirectionFacing { facing:Direction::North },
 location: Location { grid_x: 5.0, grid_y: 5.0 },

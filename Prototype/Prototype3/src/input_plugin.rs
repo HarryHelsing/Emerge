@@ -21,19 +21,12 @@ fn keyboard_input(
     mut query: Query<(&mut Location, &mut DirectionFacing), With<Player>>,
     obstacle_query: Query<&ObstacleLocation>,
 ) {
-    println!("Bug test 1");
     if keys.get_pressed().next().is_some() {
-    println!("Bug test 2");
-        //All this logic is based upon old movement logic
         //ability logic works off of which way you are facing
-        //-first look for keyboard inputs,
-        //change direction based upon this
-        //-then within the same fn, check for button presses
         //-keep in mind tweaking for technical difficulties
         //such as multiple inputs
     for (mut location, mut direction_facing) in &mut query {
 
-    println!("Bug test 3");
             if keys.just_pressed(KeyCode::KeyW) {direction_facing.facing = Direction::North}
             else if keys.just_pressed(KeyCode::KeyS) {direction_facing.facing = Direction::South}
             else if keys.just_pressed(KeyCode::KeyA) {direction_facing.facing = Direction::West}
@@ -42,15 +35,20 @@ fn keyboard_input(
 
         let mut new_x = location.grid_x;
         let mut new_y = location.grid_y;
-    if keys.just_pressed(KeyCode::KeyJ) {println!("Move");
         let mut blocked = false;
-    if direction_facing.facing == Direction::North {new_y = {new_y + 1.0}}
+    if keys.just_pressed(KeyCode::KeyJ) {println!("Move");
+    if direction_facing.facing == Direction::North {new_y = new_y + 1.0}
     else if direction_facing.facing == Direction::South {new_y = new_y - 1.0}
     else if direction_facing.facing == Direction::East {new_x = new_x + 1.0}
     else if direction_facing.facing == Direction::West {new_x = new_x - 1.0}
     }//move in facing direction, use logic.
         else if keys.just_pressed(KeyCode::KeyK) {println!("Attack")}
-        else if keys.just_pressed(KeyCode::KeyL) {println!("Leap")}
+        else if keys.just_pressed(KeyCode::KeyL) {println!("Leap");
+    if direction_facing.facing == Direction::North {new_y = new_y + 2.0}
+    else if direction_facing.facing == Direction::South {new_y = new_y - 2.0}
+    else if direction_facing.facing == Direction::East {new_x = new_x + 2.0}
+    else if direction_facing.facing == Direction::West {new_x = new_x - 2.0}
+        }
         else if keys.just_pressed(KeyCode::Semicolon) {println!("Summon")}
             //logic for J: move, K: attack, L: leap, ;: summon
             //even if just using println! to show it's working
