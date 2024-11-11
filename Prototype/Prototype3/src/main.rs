@@ -15,6 +15,8 @@ mod player_plugin;
 use player_plugin::*;
 mod input_plugin;
 use input_plugin::*;
+mod obstacle_plugin;
+use obstacle_plugin::*;
 mod grid_logic_plugin;
 use grid_logic_plugin::*;
     
@@ -37,6 +39,7 @@ fn main() {
         .add_plugins(input_plugin::InputPlugin)
         .add_plugins(player_plugin::PlayerPlugin)
         .add_plugins(animate_plugin::AnimatePlugin)
+        .add_plugins(obstacle_plugin::ObstaclePlugin)
         .add_plugins(grid_logic_plugin::GridLogicPlugin)
         .run();//add new plugins when ready
 }

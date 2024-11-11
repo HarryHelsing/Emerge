@@ -161,8 +161,8 @@ fn spawn_decoration(commands: &mut Commands, image_handle: Handle<Image>, layout
             let mut off_centre_y = -32.0;
             if location_top {off_centre_y = 32.0};
             if location_right {off_centre_x = 32.0};
-            let mut depth = 10.0;
-            if location_top {depth = 5.0};
+            let mut depth = 5.0;
+            if location_top {depth = 10.0};
     let position = Vec3::new(
         x as f32 * CELL_SIZE - 896.0 + off_centre_x,
         y as f32 * CELL_SIZE - 540.0 + off_centre_y,
@@ -211,8 +211,8 @@ fn spawn_animated_decoration(
             let mut off_centre_y = -32.0;
             if location_top {off_centre_y = 32.0};
             if location_right {off_centre_x = 32.0};
-            let mut depth = 10.0;
-            if location_top {depth = 5.0};
+            let mut depth = 5.0;
+            if location_top {depth = 10.0};
     let position = Vec3::new(
         x as f32 * CELL_SIZE - 896.0 + off_centre_x,
         y as f32 * CELL_SIZE - 540.0 + off_centre_y,
