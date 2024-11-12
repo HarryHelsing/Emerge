@@ -41,7 +41,7 @@ fn keyboard_input(
     else if direction_facing.facing == Direction::South {new_y = new_y - 1.0}
     else if direction_facing.facing == Direction::East {new_x = new_x + 1.0}
     else if direction_facing.facing == Direction::West {new_x = new_x - 1.0}
-    }//move in facing direction, use logic.
+    }
         else if keys.just_pressed(KeyCode::KeyK) {println!("Attack")}
         else if keys.just_pressed(KeyCode::KeyL) {println!("Leap");
     if direction_facing.facing == Direction::North {new_y = new_y + 2.0}
@@ -55,7 +55,8 @@ fn keyboard_input(
     for ObstacleLocation in &obstacle_query {
         if  new_x == ObstacleLocation.grid_x && new_y == ObstacleLocation.grid_y {
             blocked = true;
-            break;}}
+            break;}
+            }
     if blocked {break;}
         if new_x >= 0.0 && new_x < GRID_WIDTH as f32
             && new_y >= 0.0 && new_y < GRID_HEIGHT as f32 {

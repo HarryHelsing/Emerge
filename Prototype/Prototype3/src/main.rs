@@ -13,6 +13,8 @@ mod animate_plugin;
 use animate_plugin::*;
 mod player_plugin;
 use player_plugin::*;
+mod creature_plugin;
+use creature_plugin::*;
 mod input_plugin;
 use input_plugin::*;
 mod obstacle_plugin;
@@ -38,6 +40,7 @@ fn main() {
         .add_plugins(turn_plugin::TurnPlugin)
         .add_plugins(input_plugin::InputPlugin)
         .add_plugins(player_plugin::PlayerPlugin)
+        .add_plugins(creature_plugin::CreaturePlugin)
         .add_plugins(animate_plugin::AnimatePlugin)
         .add_plugins(obstacle_plugin::ObstaclePlugin)
         .add_plugins(grid_logic_plugin::GridLogicPlugin)
