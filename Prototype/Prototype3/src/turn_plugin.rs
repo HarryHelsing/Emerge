@@ -72,7 +72,6 @@ fn test_time_reader(
     mut update_tiles_reader: EventReader<GlobalMoveEvent>,
     ) {
 for _event in update_tiles_reader.read() {
-println!("Global time is working, hell yeah");
 }
 }
 

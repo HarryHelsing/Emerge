@@ -42,5 +42,5 @@ on_grid: OnGrid,
         }
     ));
 
-}
+}//sync player obstacle with player location!
 }

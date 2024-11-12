@@ -7,6 +7,7 @@ impl Plugin for GridLogicPlugin {
     fn build(&self, app: &mut App) {
 //        app.add_event::<>();
         app.add_systems(Update, snap_to_grid);
+        app.add_systems(Update, sync_obstacle_location);
     }
 }
 
@@ -80,5 +81,12 @@ fn snap_to_grid(mut query: Query<(&Location, &mut Transform), With<OnGrid>>) {
 
         transform.translation.x = new_x;
         transform.translation.y = new_y;
+    };
+}
+
+fn sync_obstacle_location(mut query: Query<(&Location, &mut ObstacleLocation), With<OnGrid>>) {
+    for (location, mut obstacle_location) in &mut query {
+        obstacle_location.grid_x = location.grid_x;
+        obstacle_location.grid_y = location.grid_y;
     };
 }
