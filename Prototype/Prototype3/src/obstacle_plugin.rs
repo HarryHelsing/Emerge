@@ -1,8 +1,8 @@
 use bevy::prelude::*;
 use rand::Rng;
+use crate::{CELL_SIZE, SCREEN_WIDTH, SCREEN_HEIGHT, GRID_HEIGHT, GRID_WIDTH};
 use crate::tiles_plugin::SetupEvent;
 use crate::grid_logic_plugin::{StaticEntityBundle, OnGrid, Location, ObstacleLocation,};
-use crate::player_plugin::Player;
 
 pub struct ObstaclePlugin;
 
@@ -13,12 +13,6 @@ impl Plugin for ObstaclePlugin {
     }
 }
 
-const GRID_WIDTH: usize = 15;
-const GRID_HEIGHT: usize = 9;
-const CELL_SIZE: f32 = 128.0;
-const SCREEN_WIDTH: f32 = 1920.0;
-const SCREEN_HEIGHT: f32 = 1080.0;
-
 fn create_obstacles(
     mut setup_reader: EventReader<SetupEvent>,
     asset_server: Res<AssetServer>,
@@ -27,7 +21,6 @@ fn create_obstacles(
 
     ) {
 for _event in setup_reader.read() {
-println!("The event worked!");
 
     let layout1 = TextureAtlasLayout::from_grid(UVec2::splat(128), 3, 2, None, None);
     let atlas_image1: Handle<Image> = asset_server.load("objects/rock_atlas.png");
@@ -81,7 +74,7 @@ let new_y = y as f32;
         },
     StaticEntityBundle {
     location: Location { grid_x: new_x, grid_y: new_y },
-    obstacle_location: ObstacleLocation { obstacle: true, grid_x: new_x, grid_y: new_y },
+    obstacle_location: ObstacleLocation { is_obstacle: true, grid_x: new_x, grid_y: new_y },
     on_grid: OnGrid,
         }
     ));

@@ -1,4 +1,5 @@
 use bevy::prelude::*;
+use crate::{CELL_SIZE, SCREEN_WIDTH, SCREEN_HEIGHT, GRID_HEIGHT, GRID_WIDTH};
 use crate::animate_plugin::AnimateOpenClose;
 use crate::animate_plugin::OpenCloseStates;
 use rand::Rng;
@@ -19,11 +20,7 @@ struct IsTile;
 #[derive(Event)]
 pub struct SetupEvent;
 
-const SCREEN_WIDTH: f32 = 1920.0;
-const SCREEN_HEIGHT: f32 = 1080.0;
-const GRID_WIDTH: usize = 15;
-const GRID_HEIGHT: usize = 9;//This stuff will be outdated when fluid movement/world chunks is introduced
-const CELL_SIZE: f32 = 128.0;//-side note: with chunks, should decoration be a child of chunk? look into it
+//-side note: with chunks, should decoration be a child of chunk? look into it
 /*Code is getting a tad messy. Could do with being more modular.
  *Too many magic numbers and hard coded things.
  *learn ron.
@@ -240,7 +237,6 @@ fn spawn_animated_decoration(
     reverse_animate: reverse_animate,
     loop_animation: loop_animation,
     animation_states:animation_states,
-    animation_index: index,
     first_frame: first_frame,
     last_frame: last_frame,
     just_changed_state: just_changed_state,

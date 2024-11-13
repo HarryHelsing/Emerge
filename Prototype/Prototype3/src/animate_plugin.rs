@@ -1,5 +1,4 @@
 use bevy::prelude::*;
-use crate::turn_plugin::GlobalMoveEvent;
 use crate::turn_plugin::GlobalSecondEvent;
 use crate::turn_plugin::GlobalAnimateEvent;//merge into 1 crate
 use rand::Rng;
@@ -35,8 +34,8 @@ impl Plugin for AnimatePlugin {
     }
 }
 
-#[derive(PartialEq)]
-pub enum OpenCloseStates {
+#[derive(PartialEq)]//change to FourStates?
+pub enum OpenCloseStates {//more modular
 Open ,Closing, Closed, Opening,
 }
 
@@ -46,7 +45,7 @@ last_frame: usize,
 }
 
 struct AnimationType {
-anim_type: usize,//two nested fields names animation type! fix it
+anim_type: usize,
 states: [FrameData; 4],
 }
 
@@ -59,23 +58,24 @@ animation_type: Vec<AnimationType>,
 pub struct AnimateOpenClose {
     pub animation_type: usize,
     pub no_movement: bool,
-    pub reverse_animate: bool,//check last frame is smaller than first, set to true
+    pub reverse_animate: bool,
     pub loop_animation: bool,
-    pub animation_states:OpenCloseStates,//consider seperating this into
-    pub animation_index: usize,          //its own component to keep it
-    pub first_frame: usize,              //modular. Then creating a bundle?
-    pub last_frame: usize,               //maybe include just_changed_state
-    pub just_changed_state: bool,        //would work since not all need a state
+    pub animation_states:OpenCloseStates,
+    pub first_frame: usize,
+    pub last_frame: usize,
+    pub just_changed_state: bool,
 }
-
-
+//consider seperating this into
+//its own component to keep it
+//modular. Then creating a bundle?
+//maybe include just_changed_state
+//would work since not all need a state
 
 fn animation_state_changer(
     mut global_second_reader: EventReader<GlobalSecondEvent>,
     mut decor_query: Query<&mut AnimateOpenClose>,
     ) {
 for _event in global_second_reader.read() {
-println!("Global time is working inside the animate plugin, hell yeah");
 for mut animate_open_close in decor_query.iter_mut() {
     let mut rng = rand::thread_rng();
             let decor_move = rng.gen_bool(0.1); 

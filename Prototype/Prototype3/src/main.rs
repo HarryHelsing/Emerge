@@ -8,20 +8,19 @@ use bevy::window::WindowResized;
 mod tiles_plugin;
 use tiles_plugin::*;
 mod turn_plugin;
-use turn_plugin::*;
 mod animate_plugin;
-use animate_plugin::*;
 mod player_plugin;
-use player_plugin::*;
 mod creature_plugin;
-use creature_plugin::*;
 mod input_plugin;
-use input_plugin::*;
 mod obstacle_plugin;
-use obstacle_plugin::*;
 mod grid_logic_plugin;
-use grid_logic_plugin::*;
-    
+
+pub const SCREEN_WIDTH: f32 = 1920.0;
+pub const SCREEN_HEIGHT: f32 = 1080.0;
+pub const GRID_WIDTH: usize = 15;
+pub const GRID_HEIGHT: usize = 9;
+pub const CELL_SIZE: f32 = 128.0;   
+
 fn main() {
     App::new()
         .add_plugins(

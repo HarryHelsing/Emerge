@@ -1,7 +1,6 @@
 use bevy::prelude::*;
-use crate::tiles_plugin::SetupEvent;
-use crate::grid_logic_plugin::{Direction, OnGrid, DirectionFacing, Location, ObstacleLocation};
-use crate::player_plugin::Player;
+use crate::{GRID_HEIGHT, GRID_WIDTH};
+use crate::grid_logic_plugin::{Direction, DirectionFacing, Location, ObstacleLocation, Player};
 
 pub struct InputPlugin;
 
@@ -11,10 +10,6 @@ impl Plugin for InputPlugin {
         app.add_systems(Update, keyboard_input);
     }
 }
-
-const GRID_WIDTH: usize = 15;
-const GRID_HEIGHT: usize = 9;
-const CELL_SIZE: f32 = 128.0;
 
 fn keyboard_input(
     keys: Res<ButtonInput<KeyCode>>,
@@ -52,10 +47,12 @@ fn keyboard_input(
         else if keys.just_pressed(KeyCode::Semicolon) {println!("Summon")}
             //logic for J: move, K: attack, L: leap, ;: summon
             //even if just using println! to show it's working
-    for ObstacleLocation in &obstacle_query {
-        if  new_x == ObstacleLocation.grid_x && new_y == ObstacleLocation.grid_y {
+    for obstacle_location in &obstacle_query {
+        if obstacle_location.is_obstacle {
+        if  new_x == obstacle_location.grid_x && new_y == obstacle_location.grid_y {
             blocked = true;
             break;}
+        }
             }
     if blocked {break;}
         if new_x >= 0.0 && new_x < GRID_WIDTH as f32
