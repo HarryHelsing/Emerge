@@ -1,5 +1,5 @@
 # Gahara
-Grid based hand drawn, realtime-turnbased-ish, game where you play as a frog in the wilds.
+Grid based, hand drawn, realtime-turnbased-ish, game where you play as a frog in the wilds.
 Written is Rust, using the Bevy game engine.
 
 ## Controls
