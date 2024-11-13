@@ -34,6 +34,7 @@ pub grid_y: f32,
 #[derive(Component)]
 pub struct RequestLocation {
 pub requesting: bool,
+pub can_move: bool,
 pub grid_x: f32,
 pub grid_y: f32,
 }
