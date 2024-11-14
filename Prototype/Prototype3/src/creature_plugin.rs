@@ -50,13 +50,15 @@ for _event in move_event.read() {
     let mut player_y = 0.0;
     let mut creature_x = 0.0;
     let mut creature_y = 0.0;
-    let mut blocked = true;
+    let mut blocked = false;
         for location in &player_query {
     player_x = location.grid_x;
     player_y = location.grid_y;
         }
 
     for (mut location, mut request_location, mut direction_facing) in &mut creature_query {
+        request_location.grid_x = location.grid_x;
+        request_location.grid_y = location.grid_y;
     creature_x = location.grid_x;
     creature_y = location.grid_y;
         let difference_x = (player_x - creature_x).abs();
@@ -71,8 +73,8 @@ if where_y > 0.0 {request_location.grid_y = request_location.grid_y - 1.0}
             else {request_location.grid_y = request_location.grid_y + 1.0}
         }
         for obstacle_location in &obstacle_query {
-     if  request_location.grid_x == obstacle_location.grid_x && request_location.grid_y ==  obstacle_location.grid_y { blocked = false; } 
-        }
+     if  request_location.grid_x == obstacle_location.grid_x && request_location.grid_y ==  obstacle_location.grid_y { blocked = true; } 
+             }
      if !blocked {location.grid_x = request_location.grid_x;
          location.grid_y = request_location.grid_y;}
 }
