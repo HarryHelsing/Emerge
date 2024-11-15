@@ -35,6 +35,8 @@ fn keyboard_input(
         let mut blocked = false;
     if keys.just_pressed(KeyCode::KeyJ) {println!("Move");//Send move event
     action_taken_writer.send(ActionTakenEvent);
+    //Unfortunately the way I've structured the code making
+    //action writer conditional upon a *succesful* move is tricky
     if direction_facing.facing == Direction::North {new_y = new_y + 1.0}
     else if direction_facing.facing == Direction::South {new_y = new_y - 1.0}
     else if direction_facing.facing == Direction::East {new_x = new_x + 1.0}
@@ -62,7 +64,7 @@ fn keyboard_input(
             break;}
         }
             }
-    if blocked {break;}
+    if blocked {break;}//What are these breaks for?
         if new_x >= 0.0 && new_x < GRID_WIDTH as f32
             && new_y >= 0.0 && new_y < GRID_HEIGHT as f32 {
            location.grid_x = new_x;
