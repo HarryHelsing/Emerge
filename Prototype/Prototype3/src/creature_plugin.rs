@@ -23,7 +23,7 @@ for _event in setup_reader.read() {
     commands.spawn((
         SpriteBundle {
             texture: texture_handle_hedgehog.clone(),
-            transform: Transform::from_xyz(0.0, 0.0, 15.0),
+            transform: Transform::from_xyz(0.0, 0.0, 7.0),
             ..Default::default()        
         },
         CreatureEntityBundle {
@@ -39,6 +39,7 @@ on_grid: OnGrid,
 
 }
 }
+
 fn move_creature(//creatures could have just moved comp?
 mut creature_query: Query<(&mut Location, &mut RequestLocation, &mut DirectionFacing), (With<Creature>, Without<Player>)>,
 mut player_query: Query<&Location, (With<Player>, Without<Creature>)>,

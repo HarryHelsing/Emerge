@@ -1,4 +1,5 @@
 use bevy::prelude::*;
+use crate::input_plugin::ActionTakenEvent;
 
 pub struct TurnPlugin;
 //rename to time plugin?
@@ -36,11 +37,18 @@ impl Plugin for TurnPlugin {
     }
 }
 
+//Create interupt feature by receiving event from player input fn
 fn global_time(
 time: Res<Time>,
 mut timer: ResMut<FiveSecondTimer>,
 mut global_move_writer: EventWriter<GlobalMoveEvent>,
+mut action_taken_reader: EventReader<ActionTakenEvent>,
     ) { 
+for _event in action_taken_reader.read() {
+   //reset timer! 
+    timer.0.reset();
+    global_move_writer.send(GlobalMoveEvent);
+}
 if timer. 0.tick(time.delta()).just_finished() {
     global_move_writer.send(GlobalMoveEvent);
 }

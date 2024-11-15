@@ -21,7 +21,7 @@ for _event in setup_reader.read() {
     commands.spawn((
         SpriteBundle {
             texture: texture_handle_frog.clone(),
-            transform: Transform::from_xyz(0.0, 0.0, 15.0),
+            transform: Transform::from_xyz(0.0, 0.0, 7.0),
             ..Default::default()        
         },
         PlayerEntityBundle {
