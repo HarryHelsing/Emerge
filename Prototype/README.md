@@ -29,13 +29,13 @@ By doing so I hope to understand deeper the direction of the game and learn what
 - *done* 1080p resolution
 - *done* Code separated into modules
 - *done* Create agility ability for player
+- *done* Time movement function
 - Ron file interpretation for level design?
 - Sounds for all relevant actions
 - Music track
 - Three creatures that interact
 - Destructible objects
 - Fully animated player character and creatures
-- Time movement function
 - Create attack for player and creatures
 - Implement movement logic for player and creatures
 
