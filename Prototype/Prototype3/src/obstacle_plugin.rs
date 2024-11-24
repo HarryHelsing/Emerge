@@ -3,7 +3,7 @@ use rand::Rng;
 use crate::{CELL_SIZE, SCREEN_WIDTH, SCREEN_HEIGHT, GRID_HEIGHT, GRID_WIDTH};
 use crate::tiles_plugin::SetupEvent;
 use crate::grid_logic_plugin::{StaticEntityBundle, OnGrid, Location, ObstacleLocation,};
-use crate::health_plugin::Health;
+use crate::plugin_combat::health_plugin::Health;
 
 pub struct ObstaclePlugin;
 

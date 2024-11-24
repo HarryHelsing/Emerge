@@ -7,14 +7,14 @@ use bevy::window::WindowResized;
 //add new plugins when ready
 mod tiles_plugin;
 use tiles_plugin::*;
-mod turn_plugin;
 mod animate_plugin;
 mod player_plugin;
 mod creature_plugin;
-mod input_plugin;
 mod obstacle_plugin;
-mod grid_logic_plugin;
-mod health_plugin;
+mod plugin_combat;
+use plugin_combat::health_plugin::HealthPlugin;
+mod plugin_core;
+use plugin_core::*;
 
 pub const SCREEN_WIDTH: f32 = 1920.0;
 pub const SCREEN_HEIGHT: f32 = 1080.0;
@@ -44,7 +44,7 @@ fn main() {
         .add_plugins(animate_plugin::AnimatePlugin)
         .add_plugins(obstacle_plugin::ObstaclePlugin)
         .add_plugins(grid_logic_plugin::GridLogicPlugin)
-        .add_plugins(health_plugin::HealthPlugin)
+        .add_plugins(plugin_combat::health_plugin::HealthPlugin)
         .run();//add new plugins when ready
 }
 

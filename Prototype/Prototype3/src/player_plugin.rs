@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 use crate::tiles_plugin::SetupEvent;
 use crate::grid_logic_plugin::{PlayerEntityBundle, Direction, OnGrid, DirectionFacing, Location, ObstacleLocation, Offset, Player};
-use crate::health_plugin::Health;
+use crate::plugin_combat::health_plugin::Health;
 
 pub struct PlayerPlugin;
 
