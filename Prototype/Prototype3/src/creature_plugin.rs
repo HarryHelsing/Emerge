@@ -2,6 +2,7 @@ use bevy::prelude::*;
 use crate::tiles_plugin::SetupEvent;
 use crate::turn_plugin::GlobalMoveEvent;
 use crate::grid_logic_plugin::{CreatureEntityBundle, Direction, OnGrid, DirectionFacing, Location, RequestLocation, ObstacleLocation, Offset, Creature, Player};
+use crate::health_plugin::Health;
 
 pub struct CreaturePlugin;
 
@@ -26,6 +27,10 @@ for _event in setup_reader.read() {
             transform: Transform::from_xyz(0.0, 0.0, 7.0),
             ..Default::default()        
         },
+        Health {
+            max_hp: 20,
+            current_hp: 20,
+},
         CreatureEntityBundle {
 creature: Creature,
 direction_facing: DirectionFacing { facing:Direction::North },

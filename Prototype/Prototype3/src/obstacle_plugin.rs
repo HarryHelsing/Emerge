@@ -3,6 +3,7 @@ use rand::Rng;
 use crate::{CELL_SIZE, SCREEN_WIDTH, SCREEN_HEIGHT, GRID_HEIGHT, GRID_WIDTH};
 use crate::tiles_plugin::SetupEvent;
 use crate::grid_logic_plugin::{StaticEntityBundle, OnGrid, Location, ObstacleLocation,};
+use crate::health_plugin::Health;
 
 pub struct ObstaclePlugin;
 
@@ -18,7 +19,6 @@ fn create_obstacles(
     asset_server: Res<AssetServer>,
     mut commands: Commands,
     mut texture_atlas_layouts1: ResMut<Assets<TextureAtlasLayout>>,
-
     ) {
 for _event in setup_reader.read() {
 
@@ -72,6 +72,10 @@ let new_y = y as f32;
            layout: layout_handle1,
            index: index,
         },
+        Health {
+            max_hp: 40,
+            current_hp: 40,
+},
     StaticEntityBundle {
     location: Location { grid_x: new_x, grid_y: new_y },
     obstacle_location: ObstacleLocation { is_obstacle: true, grid_x: new_x, grid_y: new_y },

@@ -14,6 +14,7 @@ mod creature_plugin;
 mod input_plugin;
 mod obstacle_plugin;
 mod grid_logic_plugin;
+mod health_plugin;
 
 pub const SCREEN_WIDTH: f32 = 1920.0;
 pub const SCREEN_HEIGHT: f32 = 1080.0;
@@ -43,6 +44,7 @@ fn main() {
         .add_plugins(animate_plugin::AnimatePlugin)
         .add_plugins(obstacle_plugin::ObstaclePlugin)
         .add_plugins(grid_logic_plugin::GridLogicPlugin)
+        .add_plugins(health_plugin::HealthPlugin)
         .run();//add new plugins when ready
 }
 

@@ -1,6 +1,7 @@
 use bevy::prelude::*;
 use crate::tiles_plugin::SetupEvent;
 use crate::grid_logic_plugin::{PlayerEntityBundle, Direction, OnGrid, DirectionFacing, Location, ObstacleLocation, Offset, Player};
+use crate::health_plugin::Health;
 
 pub struct PlayerPlugin;
 
@@ -24,6 +25,10 @@ for _event in setup_reader.read() {
             transform: Transform::from_xyz(0.0, 0.0, 7.0),
             ..Default::default()        
         },
+        Health {
+            max_hp: 140,
+            current_hp: 140,
+},
         PlayerEntityBundle {
 player: Player,
 direction_facing: DirectionFacing { facing:Direction::North },
