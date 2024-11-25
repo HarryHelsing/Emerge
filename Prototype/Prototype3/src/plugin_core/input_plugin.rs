@@ -19,6 +19,7 @@ fn keyboard_input(
     mut query: Query<(&mut Location, &mut DirectionFacing), With<Player>>,
     obstacle_query: Query<&ObstacleLocation>,
     mut action_taken_writer: EventWriter<ActionTakenEvent>,
+    mut attack_writer: EventWriter<AttackEvent>,
 ) {
     if keys.get_pressed().next().is_some() {
         //ability logic works off of which way you are facing
@@ -44,9 +45,11 @@ fn keyboard_input(
     }
         else if keys.just_pressed(KeyCode::KeyK) {println!("Attack");
     action_taken_writer.send(ActionTakenEvent);
+    //if statements? Or match statement for direction,
+    //player location plus direction for attack location
         }//Send move event
         else if keys.just_pressed(KeyCode::KeyL) {println!("Leap");//Send move event
-    action_taken_writer.send(ActionTakenEvent);
+    action_taken_writer.send(ActionTakenEvent);//why am I using if statements? just use match?
     if direction_facing.facing == Direction::North {new_y = new_y + 2.0}
     else if direction_facing.facing == Direction::South {new_y = new_y - 2.0}
     else if direction_facing.facing == Direction::East {new_x = new_x + 2.0}
