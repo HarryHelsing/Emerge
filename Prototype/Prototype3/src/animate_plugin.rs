@@ -1,6 +1,5 @@
 use bevy::prelude::*;
-use crate::turn_plugin::GlobalSecondEvent;
-use crate::turn_plugin::GlobalAnimateEvent;//merge into 1 crate
+use crate::turn_plugin::{GlobalSecondEvent, GlobalAnimateEvent};
 use rand::Rng;
 
 pub struct AnimatePlugin;

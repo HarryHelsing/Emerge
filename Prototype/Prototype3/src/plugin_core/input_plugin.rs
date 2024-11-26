@@ -1,6 +1,7 @@
 use bevy::prelude::*;
 use crate::{GRID_HEIGHT, GRID_WIDTH};
 use crate::grid_logic_plugin::{Direction, DirectionFacing, Location, ObstacleLocation, Player};
+use crate::plugin_combat::attack_plugin::AttackEvent;
 
 pub struct InputPlugin;
 
@@ -18,8 +19,12 @@ fn keyboard_input(
     keys: Res<ButtonInput<KeyCode>>,
     mut query: Query<(&mut Location, &mut DirectionFacing), With<Player>>,
     obstacle_query: Query<&ObstacleLocation>,
-    mut action_taken_writer: EventWriter<ActionTakenEvent>,
-    mut attack_writer: EventWriter<AttackEvent>,
+    mut writers: EventWriter<ActionTakenEvent>,
+    //refactor, send key pressed event to different fn.
+    //I have created a monolith function
+    //-break into movement fn, leap, attack. with direction & location
+//    mut writers: (EventWriter<ActionTakenEvent>, EventWriter<AttackEvent>),
+//    mut attack_writer: EventWriter<AttackEvent>,
 ) {
     if keys.get_pressed().next().is_some() {
         //ability logic works off of which way you are facing
@@ -35,28 +40,32 @@ fn keyboard_input(
         let mut new_y = location.grid_y;
         let mut blocked = false;
     if keys.just_pressed(KeyCode::KeyJ) {println!("Move");//Send move event
-    action_taken_writer.send(ActionTakenEvent);
+    writers.send(ActionTakenEvent);
     //Unfortunately the way I've structured the code making
     //action writer conditional upon a *succesful* move is tricky
-    if direction_facing.facing == Direction::North {new_y = new_y + 1.0}
-    else if direction_facing.facing == Direction::South {new_y = new_y - 1.0}
-    else if direction_facing.facing == Direction::East {new_x = new_x + 1.0}
-    else if direction_facing.facing == Direction::West {new_x = new_x - 1.0}
+    match direction_facing.facing {
+        Direction::North => {new_y = new_y + 1.0}
+        Direction::South => {new_y = new_y - 1.0}
+        Direction::East => {new_x = new_x + 1.0}
+        Direction::West => {new_x = new_x - 1.0}
     }
+}
         else if keys.just_pressed(KeyCode::KeyK) {println!("Attack");
-    action_taken_writer.send(ActionTakenEvent);
+    writers.send(ActionTakenEvent);
     //if statements? Or match statement for direction,
     //player location plus direction for attack location
         }//Send move event
         else if keys.just_pressed(KeyCode::KeyL) {println!("Leap");//Send move event
-    action_taken_writer.send(ActionTakenEvent);//why am I using if statements? just use match?
-    if direction_facing.facing == Direction::North {new_y = new_y + 2.0}
-    else if direction_facing.facing == Direction::South {new_y = new_y - 2.0}
-    else if direction_facing.facing == Direction::East {new_x = new_x + 2.0}
-    else if direction_facing.facing == Direction::West {new_x = new_x - 2.0}
-        }
+   writers.send(ActionTakenEvent);
+     match direction_facing.facing {
+        Direction::North => {new_y = new_y + 2.0}
+        Direction::South => {new_y = new_y - 2.0}
+        Direction::East => {new_x = new_x + 2.0}
+        Direction::West => {new_x = new_x - 2.0}
+    }
+}
         else if keys.just_pressed(KeyCode::KeyI) {println!("Summon");
-    action_taken_writer.send(ActionTakenEvent);
+    writers.send(ActionTakenEvent);
         }//Send move event
             //logic for J: move, K: attack, L: leap, ;: summon
             //even if just using println! to show it's working
