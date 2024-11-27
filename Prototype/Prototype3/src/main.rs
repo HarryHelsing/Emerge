@@ -8,13 +8,12 @@ use bevy::window::WindowResized;
 mod tiles_plugin;
 use tiles_plugin::*;
 mod animate_plugin;
-mod player_plugin;
-mod creature_plugin;
-mod obstacle_plugin;
 mod plugin_combat;
-use plugin_combat::health_plugin::HealthPlugin;
+use plugin_combat::*;
 mod plugin_core;
 use plugin_core::*;
+mod plugin_entities;
+use plugin_entities::*;
 
 pub const SCREEN_WIDTH: f32 = 1920.0;
 pub const SCREEN_HEIGHT: f32 = 1080.0;

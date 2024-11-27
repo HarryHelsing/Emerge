@@ -23,6 +23,7 @@ fn keyboard_input(
     //refactor, send key pressed event to different fn.
     //I have created a monolith function
     //-break into movement fn, leap, attack. with direction & location
+    //check if inputs are valid in other fns, then send actiontaken event
 //    mut writers: (EventWriter<ActionTakenEvent>, EventWriter<AttackEvent>),
 //    mut attack_writer: EventWriter<AttackEvent>,
 ) {
