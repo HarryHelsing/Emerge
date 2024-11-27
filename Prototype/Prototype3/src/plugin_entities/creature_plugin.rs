@@ -15,7 +15,8 @@ impl Plugin for CreaturePlugin {
 }
 
 fn spawn_creature(
-mut commands: Commands, asset_server: Res<AssetServer>,
+    mut commands: Commands,
+    asset_server: Res<AssetServer>,
     mut setup_reader: EventReader<SetupEvent>,
     ) {
 for _event in setup_reader.read() {

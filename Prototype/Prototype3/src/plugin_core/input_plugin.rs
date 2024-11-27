@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 use crate::{GRID_HEIGHT, GRID_WIDTH};
 use crate::grid_logic_plugin::{Direction, DirectionFacing, Location, ObstacleLocation, Player};
-use crate::plugin_combat::attack_plugin::AttackEvent;
+use crate::plugin_combat::attack_plugin::PlayerAttackEvent;
 
 pub struct InputPlugin;
 
@@ -20,6 +20,7 @@ fn keyboard_input(
     mut query: Query<(&mut Location, &mut DirectionFacing), With<Player>>,
     obstacle_query: Query<&ObstacleLocation>,
     mut writers: EventWriter<ActionTakenEvent>,
+    mut attack_writer: EventWriter<PlayerAttackEvent>,
     //refactor, send key pressed event to different fn.
     //I have created a monolith function
     //-break into movement fn, leap, attack. with direction & location
@@ -40,7 +41,7 @@ fn keyboard_input(
         let mut new_x = location.grid_x;
         let mut new_y = location.grid_y;
         let mut blocked = false;
-    if keys.just_pressed(KeyCode::KeyJ) {println!("Move");//Send move event
+    if keys.just_pressed(KeyCode::KeyJ) {
     writers.send(ActionTakenEvent);
     //Unfortunately the way I've structured the code making
     //action writer conditional upon a *succesful* move is tricky
@@ -51,12 +52,17 @@ fn keyboard_input(
         Direction::West => {new_x = new_x - 1.0}
     }
 }
-        else if keys.just_pressed(KeyCode::KeyK) {println!("Attack");
+        else if keys.just_pressed(KeyCode::KeyK) {
     writers.send(ActionTakenEvent);
+    attack_writer.send(PlayerAttackEvent {
+grid_x: new_x,
+grid_y: new_y,
+direction: Direction::North,
+    });
     //if statements? Or match statement for direction,
     //player location plus direction for attack location
         }//Send move event
-        else if keys.just_pressed(KeyCode::KeyL) {println!("Leap");//Send move event
+        else if keys.just_pressed(KeyCode::KeyL) {
    writers.send(ActionTakenEvent);
      match direction_facing.facing {
         Direction::North => {new_y = new_y + 2.0}
@@ -65,9 +71,9 @@ fn keyboard_input(
         Direction::West => {new_x = new_x - 2.0}
     }
 }
-        else if keys.just_pressed(KeyCode::KeyI) {println!("Summon");
+        else if keys.just_pressed(KeyCode::KeyI) {
     writers.send(ActionTakenEvent);
-        }//Send move event
+        }
             //logic for J: move, K: attack, L: leap, ;: summon
             //even if just using println! to show it's working
     for obstacle_location in &obstacle_query {

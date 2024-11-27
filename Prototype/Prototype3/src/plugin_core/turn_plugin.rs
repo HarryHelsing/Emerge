@@ -21,7 +21,6 @@ struct OneSecondTimer(Timer);
 #[derive(Resource)]
 struct ZeroPointTwoSecondTimer(Timer);
 
-//create 4s repeating timer resource
 impl Plugin for TurnPlugin {
     fn build(&self, app: &mut App) {
     app.insert_resource(FiveSecondTimer(Timer::from_seconds(5.0, TimerMode::Repeating)));

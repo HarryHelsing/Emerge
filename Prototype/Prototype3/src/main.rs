@@ -2,6 +2,7 @@ use bevy::prelude::*;
 use bevy::window::PrimaryWindow;
 use bevy::render::camera::ScalingMode;
 use bevy::window::WindowResized;
+use crate::attack_plugin::ChangePlayerAttackEvent;
 
 
 //add new plugins when ready
@@ -35,6 +36,7 @@ fn main() {
         )
         .add_systems(Startup, setup)
         .add_systems(Update, resize_camera)//done
+        .add_plugins(attack_plugin::AttackPlugin)
         .add_plugins(tiles_plugin::TilesPlugin)
         .add_plugins(turn_plugin::TurnPlugin)
         .add_plugins(input_plugin::InputPlugin)
@@ -48,9 +50,18 @@ fn main() {
 }
 
 fn setup(
-    mut commands: Commands, mut setup_writer: EventWriter<SetupEvent>,
+    asset_server: Res<AssetServer>,
+    mut commands: Commands,
+    mut setup_writer: EventWriter<SetupEvent>,
+    mut attack_writer: EventWriter<ChangePlayerAttackEvent>,
     ) {
     setup_writer.send(SetupEvent);
+    let default_frog_attack = asset_server.load("player/frog_attack.png");
+    attack_writer.send(ChangePlayerAttackEvent {
+        image_handle: default_frog_attack,
+        damage: 20,
+        range: 2.0,
+    });
     commands.spawn(Camera2dBundle::default());
 }
 

@@ -69,7 +69,12 @@ commands.entity(entity).despawn();
 }
 }
 
-fn spawn_tile(commands: &mut Commands, image_handle: Handle<Image>, layout_handle: Handle<TextureAtlasLayout>, x: usize, y: usize, index: usize) {
+fn spawn_tile(commands: &mut Commands,
+              image_handle: Handle<Image>,
+              layout_handle: Handle<TextureAtlasLayout>,
+              x: usize,
+              y: usize,
+              index: usize) {
     let position = Vec3::new(
     x as f32 * CELL_SIZE - (SCREEN_WIDTH / 2.0) + 64.0,
     y as f32 * CELL_SIZE - (SCREEN_HEIGHT / 2.0) + 64.0,
