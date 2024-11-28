@@ -40,7 +40,7 @@ fn keyboard_input(
         let mut new_x = location.grid_x;
         let mut new_y = location.grid_y;
         let mut blocked = false;
-    if keys.just_pressed(KeyCode::KeyJ) {
+    if keys.just_pressed(KeyCode::KeyK) {
     writers.send(ActionTakenEvent);
     //Unfortunately the way I've structured the code making
     //action writer conditional upon a *succesful* move is tricky
@@ -51,7 +51,7 @@ fn keyboard_input(
         Direction::West => {new_x = new_x - 1.0}
     }
 }
-        else if keys.just_pressed(KeyCode::KeyK) {
+        else if keys.just_pressed(KeyCode::KeyJ) {
     writers.send(ActionTakenEvent);
     let new_direction = direction_facing.facing.clone();
     attack_writer.send(PlayerAttackEvent {
@@ -62,7 +62,7 @@ direction: new_direction,
     //if statements? Or match statement for direction,
     //player location plus direction for attack location
         }//Send move event
-        else if keys.just_pressed(KeyCode::KeyL) {
+        else if keys.just_pressed(KeyCode::KeyI) {
    writers.send(ActionTakenEvent);
      match direction_facing.facing {
         Direction::North => {new_y = new_y + 2.0}
@@ -71,7 +71,7 @@ direction: new_direction,
         Direction::West => {new_x = new_x - 2.0}
     }
 }
-        else if keys.just_pressed(KeyCode::KeyI) {
+        else if keys.just_pressed(KeyCode::KeyL) {
     writers.send(ActionTakenEvent);
         }
             //logic for J: move, K: attack, L: leap, ;: summon
