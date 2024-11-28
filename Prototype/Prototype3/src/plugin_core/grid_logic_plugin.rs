@@ -12,7 +12,7 @@ impl Plugin for GridLogicPlugin {
     }
 }
 
-#[derive(PartialEq)]
+#[derive(PartialEq, Clone)]
 pub enum Direction {
 North, East, South, West,
 }

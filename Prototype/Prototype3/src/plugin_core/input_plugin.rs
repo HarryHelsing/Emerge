@@ -4,7 +4,6 @@ use crate::grid_logic_plugin::{Direction, DirectionFacing, Location, ObstacleLoc
 use crate::plugin_combat::attack_plugin::PlayerAttackEvent;
 
 pub struct InputPlugin;
-
 impl Plugin for InputPlugin {
     fn build(&self, app: &mut App) {
         app.add_event::<ActionTakenEvent>();
@@ -54,10 +53,11 @@ fn keyboard_input(
 }
         else if keys.just_pressed(KeyCode::KeyK) {
     writers.send(ActionTakenEvent);
+    let new_direction = direction_facing.facing.clone();
     attack_writer.send(PlayerAttackEvent {
 grid_x: new_x,
 grid_y: new_y,
-direction: Direction::North,
+direction: new_direction,
     });
     //if statements? Or match statement for direction,
     //player location plus direction for attack location
