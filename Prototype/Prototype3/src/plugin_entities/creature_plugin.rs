@@ -8,18 +8,30 @@ pub struct CreaturePlugin;
 
 impl Plugin for CreaturePlugin {
     fn build(&self, app: &mut App) {
-//        app.add_event::<>();
+        app.add_event::<SpawnCreature>();
         app.add_systems(Update, spawn_creature);
         app.add_systems(Update, move_creature);
+        app.add_systems(Update, count_turns);
+        app.insert_resource(TurnsTaken {
+            turns: 6,
+        });
     }
+}
+
+#[derive(Event)]
+struct SpawnCreature;
+
+#[derive(Resource)]
+struct TurnsTaken {
+    turns: usize,
 }
 
 fn spawn_creature(
     mut commands: Commands,
     asset_server: Res<AssetServer>,
-    mut setup_reader: EventReader<SetupEvent>,
+    mut reader: EventReader<SpawnCreature>,
     ) {
-for _event in setup_reader.read() {
+for _event in reader.read() {
     let texture_handle_hedgehog = asset_server.load("creatures/hedgehog.png");                                                                                     
 
     commands.spawn((
@@ -46,6 +58,20 @@ on_grid: OnGrid,
 }
 }
 
+fn count_turns(
+mut turn_count_res: ResMut<TurnsTaken>,
+mut spawn_event_writer: EventWriter<SpawnCreature>,
+mut move_reader: EventReader<GlobalMoveEvent>,
+    ) {
+for _event in move_reader.read() {
+    if turn_count_res.turns == 6 {
+    turn_count_res.turns = 0;
+    spawn_event_writer.send(SpawnCreature);
+    }
+    else {turn_count_res.turns = turn_count_res.turns + 1}
+}
+
+}
 fn move_creature(//change to creature action fn
 mut creature_query: Query<(&mut Location, &mut RequestLocation, &mut DirectionFacing), (With<Creature>, Without<Player>)>,
 mut player_query: Query<&Location, (With<Player>, Without<Creature>)>,
