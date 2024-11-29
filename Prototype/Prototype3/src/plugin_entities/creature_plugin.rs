@@ -46,13 +46,16 @@ on_grid: OnGrid,
 }
 }
 
-fn move_creature(//creatures could have just moved comp?
+fn move_creature(//change to creature action fn
 mut creature_query: Query<(&mut Location, &mut RequestLocation, &mut DirectionFacing), (With<Creature>, Without<Player>)>,
 mut player_query: Query<&Location, (With<Player>, Without<Creature>)>,
 mut obstacle_query: Query<&ObstacleLocation>,
 mut move_event: EventReader<GlobalMoveEvent>,
     ) {
 for _event in move_event.read() {
+    //if in attack range then send attack event, else move
+    //in fact, could extract logic into a movement fn?
+    //then send an event to it, maybe fn could be in this plugin?
     let mut player_x = 0.0;
     let mut player_y = 0.0;
     let mut creature_x = 0.0;
